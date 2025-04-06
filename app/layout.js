@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EasyForms",
+  title: "ezForms",
   description: "Easily create questionaries from unlimited templates.",
 };
 

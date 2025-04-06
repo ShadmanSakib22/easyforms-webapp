@@ -1,4 +1,4 @@
-# EasyForms - A simple form builder
+# ezForms - Take tests the simple way.
 
 ## Author - [Shadman Sakib](https://github.com/shadmansakib22)
 
