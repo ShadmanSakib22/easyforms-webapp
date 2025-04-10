@@ -1,0 +1,28 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Used by Prisma Client
+  url = env("DATABASE_URL")
+  // Used by Prisma Migrate
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid()) // Internal DB ID
+  clerkId   String   @unique             // Clerk User ID - for Sync!
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String   @default("member")  // "member", "admin"
+  status    String   @default("active")  // "active", "blocked"
+
+  // Add relations to other models (Templates, Forms, etc.) later
+  // templates Template[]
+  // forms     Form[]
+}
+
+// Add other application models (Template, Form, Question, Answer, etc.) below
