@@ -1,7 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
-// All routes are public except /dashboard - Other checks will be handled by db queries
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/adminpanel(.*)",
+]);
+// Other routes are public by default - specific checks are handled by db queries
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) await auth.protect();
