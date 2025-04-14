@@ -19,6 +19,7 @@
     "prisma": "^6.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2",
     "svix": "^1.63.1"
   },
   "devDependencies": {

@@ -49,7 +49,7 @@ async function handler(request) {
           status: "active", // Default status
         },
       });
-      console.log(`User ${newUser.id} created in DB for Clerk ID ${id}`);
+      console.log(`User ${newUser.clerkId} created in DB.`);
     } catch (error) {
       // Handle potential unique constraint violation if webhook retries/user already exists
       if (error.code === "P2002") {
@@ -89,7 +89,7 @@ async function handler(request) {
         where: { clerkId: id },
         data: dataToUpdate,
       });
-      console.log(`User ${updatedUser.id} updated in DB for Clerk ID ${id}`);
+      console.log(`User with Clerk ID ${updatedUser.clerkId} updated in DB.`);
     } catch (error) {
       // Handle case where user might not exist in DB yet (e.g., if created webhook failed)
       if (error.code === "P2025") {

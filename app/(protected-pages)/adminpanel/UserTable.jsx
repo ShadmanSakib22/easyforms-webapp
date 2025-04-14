@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useTransition } from "react";
 import { format } from "date-fns";
 import {
   useReactTable,
@@ -19,11 +19,13 @@ import {
   LockKeyholeIcon,
   LockKeyholeOpen,
 } from "lucide-react";
+import { lockUsers, unlockUsers, deleteUsers } from "./actions";
+import toast, { Toaster } from "react-hot-toast";
 
 // --- Status/Role Styling Maps ---
 const statusBadgeMap = {
   active: "badge-success",
-  blocked: "badge-error",
+  locked: "badge-error",
 };
 const roleBadgeMap = {
   admin: "badge-secondary",
@@ -32,7 +34,6 @@ const roleBadgeMap = {
 
 // --- TanStack Table Column Definition ---
 const columnHelper = createColumnHelper();
-
 const columns = [
   // Select Column
   columnHelper.display({
@@ -131,12 +132,13 @@ const columns = [
   }),
 ];
 
-// --- The Main Table Component ---
+// --- The Main Component ---
 const UserTable = ({ initialUsers }) => {
-  const [data, setData] = useState(initialUsers); // Keep local state if needed for updates after actions
+  const [data] = useState(initialUsers); // Keep local state if needed for updates after actions
   const [sorting, setSorting] = useState([{ id: "createdAt", desc: true }]); // Initial sort state
-  const [globalFilter, setGlobalFilter] = useState(""); // For the main search box
-  const [rowSelection, setRowSelection] = useState({}); // State for selected rows { 'clerkId1': true, 'clerkId2': true }
+  const [globalFilter, setGlobalFilter] = useState(""); // Search Box
+  const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'clerkId1': true, 'clerkId2': true }
+  const [isPending, startTransition] = useTransition(); // Toolbar Button States
 
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
@@ -149,7 +151,7 @@ const UserTable = ({ initialUsers }) => {
       sorting,
       globalFilter,
       rowSelection,
-      // No need to manage pagination state here if using default component pagination
+      // using default component pagination
     },
     // Linking state handlers
     onSortingChange: setSorting,
@@ -160,58 +162,58 @@ const UserTable = ({ initialUsers }) => {
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // Features
-    enableRowSelection: true, // Enable row selection feature
+    // Row Selection Logic
+    enableRowSelection: true,
     getRowId: (row) => row.clerkId, // Use 'clerkId' as the unique ID for selection state
-    // Debugging (optional)
-    // debugTable: true,
-    // debugHeaders: true,
-    // debugColumns: true,
   });
 
-  // --- Action Handlers (Placeholders) ---
+  // --- Action Handlers ---
   const getSelectedClerkIds = useCallback(() => {
     return Object.keys(rowSelection); // Get the keys (clerkIds) from the selection state
   }, [rowSelection]);
 
+  const executeAction = useCallback((actionFn, ids, messages) => {
+    if (ids.length === 0) return;
+
+    const promise = actionFn(ids);
+
+    startTransition(() => {
+      // Use transition for pending state on buttons
+      toast.promise(promise, {
+        // Messages for different states
+        loading: messages.loading,
+        success: (result) => {
+          if (result.success) {
+            setRowSelection({}); // Clear selection on success
+            return result.message;
+          } else {
+            throw new Error(result.error);
+          }
+        },
+        error: (err) => `${err.message}`,
+      });
+    });
+  }, []);
+
+  const handleLock = useCallback(() => {
+    executeAction(lockUsers, getSelectedClerkIds(), {
+      loading: "Locking user(s)...",
+    });
+  }, [getSelectedClerkIds, executeAction]);
+
+  const handleUnlock = useCallback(() => {
+    executeAction(unlockUsers, getSelectedClerkIds(), {
+      loading: "Unlocking user(s)...",
+    });
+  }, [getSelectedClerkIds, executeAction]);
+
   const handleDelete = useCallback(() => {
     const idsToDelete = getSelectedClerkIds();
-    if (idsToDelete.length === 0) {
-      console.log("Select users to delete");
-      return;
-    }
-    console.log("Attempting to DELETE users with Clerk IDs:", idsToDelete);
-    // TODO: Implement API call to backend
-    // Example optimistic update / refetch:
-    // setData(prev => prev.filter(user => !idsToDelete.includes(user.clerkId)));
-    // setRowSelection({}); // Clear selection
-  }, [getSelectedClerkIds]); // Include getSelectedClerkIds
-
-  const handleBan = useCallback(() => {
-    const idsToBan = getSelectedClerkIds();
-    if (idsToBan.length === 0) {
-      console.log("Select users to ban");
-      return;
-    }
-    console.log("Attempting to BAN users with Clerk IDs:", idsToBan);
-    // TODO: Implement API call to backend
-    // Example optimistic update / refetch:
-    // setData(prev => prev.map(user => idsToBan.includes(user.clerkId) ? {...user, status: 'blocked'} : user ));
-    // setRowSelection({}); // Clear selection
-  }, [getSelectedClerkIds]);
-
-  const handleUnban = useCallback(() => {
-    const idsToUnban = getSelectedClerkIds();
-    if (idsToUnban.length === 0) {
-      console.log("Select users to unban");
-      return;
-    }
-    console.log("Attempting to UNBAN users with Clerk IDs:", idsToUnban);
-    // TODO: Implement API call to backend
-    // Example optimistic update / refetch:
-    // setData(prev => prev.map(user => idsToUnban.includes(user.clerkId) ? {...user, status: 'active'} : user ));
-    // setRowSelection({}); // Clear selection
-  }, [getSelectedClerkIds]);
+    if (idsToDelete.length === 0) return;
+    executeAction(deleteUsers, idsToDelete, {
+      loading: "Deleting user(s)...",
+    });
+  }, [getSelectedClerkIds, executeAction]);
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
@@ -220,7 +222,18 @@ const UserTable = ({ initialUsers }) => {
   const currentRowsPerPage = table.getState().pagination.pageSize;
 
   return (
-    <div>
+    <>
+      <Toaster
+        containerStyle={{
+          position: "relative",
+        }}
+        reverseOrder={false}
+        toastOptions={{
+          className: "bg-base-300! text-base-content! border! border-primary!",
+          duration: 5000,
+        }}
+      />
+
       {/* Top Controls: Search and Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-200 rounded-lg">
         <div className="w-full md:w-auto">
@@ -237,32 +250,53 @@ const UserTable = ({ initialUsers }) => {
         </div>
         <div className="flex flex-wrap gap-2">
           <button
-            className="btn btn-error btn-sm"
+            className={`btn btn-error btn-sm ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={handleDelete}
-            disabled={selectedRowCount === 0}
+            disabled={selectedRowCount === 0 || isPending}
           >
-            <Ban className="w-4 h-4" /> Delete ({selectedRowCount})
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <Ban className="w-4 h-4" />
+            )}
+            Delete ({selectedRowCount})
           </button>
           <button
-            className="btn btn-warning btn-sm"
-            onClick={handleBan}
-            disabled={selectedRowCount === 0}
+            className={`btn btn-warning btn-sm ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleLock}
+            disabled={selectedRowCount === 0 || isPending}
           >
-            <LockKeyholeIcon className="w-4 h-4" /> Ban ({selectedRowCount})
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <LockKeyholeIcon className="w-4 h-4" />
+            )}
+            Lock ({selectedRowCount})
           </button>
           <button
-            className="btn btn-success btn-sm"
-            onClick={handleUnban}
-            disabled={selectedRowCount === 0}
+            className={`btn btn-success btn-sm ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleUnlock}
+            disabled={selectedRowCount === 0 || isPending}
           >
-            <LockKeyholeOpen className="w-4 h-4" /> Unban ({selectedRowCount})
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <LockKeyholeOpen className="w-4 h-4" />
+            )}
+            Unlock ({selectedRowCount})
           </button>
         </div>
       </div>
 
       {/* Table Container */}
       <div className="overflow-x-auto border border-base-300 rounded-lg">
-        <table className="table table-zebra table-pin-rows w-full">
+        <table className="table table-pin-rows w-full">
           {/* Head */}
           <thead className="bg-base-200">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -301,7 +335,7 @@ const UserTable = ({ initialUsers }) => {
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className={`hover ${
+                  className={`hover:bg-primary/10 ${
                     row.getIsSelected() ? "bg-primary/20" : ""
                   }`}
                 >
@@ -370,14 +404,15 @@ const UserTable = ({ initialUsers }) => {
             >
               «
             </button>
-            {/* Optional: Page number input */}
-            {/* <input
-               type="number"
-               value={currentPage}
-               onChange={e => table.setPageIndex(Math.max(0, Number(e.target.value) - 1))}
-               className="join-item btn btn-sm w-16 text-center"
-            /> */}
-            <button className="join-item btn btn-sm">Page {currentPage}</button>
+            {/* Page number input */}
+            <input
+              type="number"
+              value={currentPage}
+              onChange={(e) =>
+                table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
+              }
+              className="join-item btn btn-sm w-14 text-center"
+            />
             <button
               className="join-item btn btn-sm"
               onClick={() => table.nextPage()}
@@ -388,7 +423,7 @@ const UserTable = ({ initialUsers }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

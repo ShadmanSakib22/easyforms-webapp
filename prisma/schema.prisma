@@ -1,6 +1,7 @@
 // prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -12,8 +13,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid()) // Internal DB ID
-  clerkId   String   @unique             // Clerk User ID - for Sync!
+  clerkId   String   @id
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

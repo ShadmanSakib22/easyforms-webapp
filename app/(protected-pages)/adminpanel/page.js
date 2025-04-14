@@ -2,7 +2,7 @@
 import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
-import UserTable from "@/app/_components/UserTable"; // We will create this Client Component next
+import UserTable from "./UserTable";
 
 var currentUserEmail = "";
 
@@ -61,7 +61,9 @@ const AdminPanelPage = async () => {
   return (
     <div className="container mx-auto p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
-      <p className="mb-6">Welcome, {currentUserEmail}</p>
+      <p className="mb-6">
+        Welcome, <span className="text-primary">{currentUserEmail}</span>{" "}
+      </p>
 
       <UserTable initialUsers={users} />
     </div>
