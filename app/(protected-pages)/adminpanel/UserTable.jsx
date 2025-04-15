@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useTransition } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useTransition,
+} from "react";
 import { format } from "date-fns";
 import {
   useReactTable,
@@ -19,6 +25,7 @@ import {
   LockKeyholeIcon,
   LockKeyholeOpen,
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 import { lockUsers, unlockUsers, deleteUsers } from "./actions";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -134,7 +141,7 @@ const columns = [
 
 // --- The Main Component ---
 const UserTable = ({ initialUsers }) => {
-  const [data] = useState(initialUsers); // Keep local state if needed for updates after actions
+  const [data, setData] = useState(initialUsers); // setData for realtime updates
   const [sorting, setSorting] = useState([{ id: "createdAt", desc: true }]); // Initial sort state
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
   const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'clerkId1': true, 'clerkId2': true }
@@ -215,11 +222,82 @@ const UserTable = ({ initialUsers }) => {
     });
   }, [getSelectedClerkIds, executeAction]);
 
+  const handleSetAdmin = useCallback(() => {
+    executeAction(setAdmin, getSelectedClerkIds(), {
+      loading: "Promoting to admin(s)...",
+    });
+  }, [getSelectedClerkIds, executeAction]);
+
+  const handleSetMember = useCallback(() => {
+    executeAction(setMember, getSelectedClerkIds(), {
+      loading: "Demoting Admin(s)...",
+    });
+  }, [getSelectedClerkIds, executeAction]);
+
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
   const currentPage = table.getState().pagination.pageIndex + 1; // Tanstack is 0-based
   const pageCount = table.getPageCount();
   const currentRowsPerPage = table.getState().pagination.pageSize;
+
+  // UseEffect for real-time db updates
+  useEffect(() => {
+    const handleRealtimeUpdate = (payload) => {
+      setData((prevData) => {
+        switch (payload.eventType) {
+          case "INSERT":
+            if (prevData.some((user) => user.clerkId === payload.new.clerkId)) {
+              return prevData; // Skip duplicate
+            }
+            // Add new user
+            return [payload.new, ...prevData];
+
+          case "UPDATE":
+            if (
+              !prevData.some((user) => user.clerkId === payload.new.clerkId)
+            ) {
+              return prevData; // Skip update if user not found in current state
+            }
+            // Update existing user
+            return prevData.map((user) =>
+              user.clerkId === payload.new.clerkId
+                ? { ...user, ...payload.new } // Merge updates
+                : user
+            );
+
+          case "DELETE":
+            if (
+              !prevData.some((user) => user.clerkId === payload.old.clerkId)
+            ) {
+              return prevData; // Skip delete if user not found in current state
+            }
+            // Remove deleted user
+            return prevData.filter(
+              (user) => user.clerkId !== payload.old.clerkId
+            );
+
+          default:
+            // Ignore other event types
+            return prevData;
+        }
+      });
+    };
+
+    // Setup Realtime Subscription
+    const UserChannel = supabase
+      .channel("db-users-table-channel") // Consistent channel name
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "User" }, // User - table name in DB
+        handleRealtimeUpdate
+      )
+      .subscribe();
+
+    // Cleanup: Unsubscribe when component unmounts
+    return () => {
+      supabase.removeChannel(UserChannel);
+    };
+  }, []);
 
   return (
     <>

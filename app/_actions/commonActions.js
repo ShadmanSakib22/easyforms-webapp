@@ -1,8 +1,10 @@
 // app/actions/commonActions.js
 import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 // Handler Function for Admin Check
-export async function isAdmin(userId) {
+async function isAdmin(userId) {
   if (!userId) return false;
   try {
     const user = await prisma.user.findUnique({
@@ -15,3 +17,41 @@ export async function isAdmin(userId) {
     return false;
   }
 }
+
+export async function isLocked(optionalUserId) {
+  let userIdToUse = null;
+
+  if (optionalUserId !== undefined) {
+    userIdToUse = optionalUserId;
+  } else {
+    const { userId, redirectToSignIn } = await auth();
+    if (!userId) {
+      return redirectToSignIn();
+    }
+    userIdToUse = userId;
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userIdToUse },
+      select: { status: true },
+    });
+    return user?.status === "locked";
+  } catch (error) {
+    console.error("Error checking status:", error);
+    return false;
+  }
+}
+
+export const adminPermissionsCheck = async () => {
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) {
+    return redirectToSignIn();
+  }
+  if (await isLocked(userId)) {
+    redirect("/locked");
+  }
+  if (!(await isAdmin(userId))) {
+    redirect("/403");
+  }
+};

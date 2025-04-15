@@ -3,19 +3,11 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { isAdmin } from "@/app/_actions/commonActions";
+import { clerkClient } from "@clerk/nextjs/server";
+import { adminPermissionsCheck } from "@/app/_actions/commonActions";
 
 export async function lockUsers(clerkIds) {
-  // 1. Verify Admin Role (Kept for security)
-  const { userId: requestingUserId } = await auth();
-  if (!requestingUserId) {
-    return { success: false, error: "Unauthorized" };
-  }
-  const isAdminUser = await isAdmin(requestingUserId);
-  if (!isAdminUser) {
-    return { success: false, error: "Forbidden" };
-  }
+  await adminPermissionsCheck();
 
   if (!Array.isArray(clerkIds) || clerkIds.length === 0) {
     return { success: false, error: "Invalid or empty user IDs provided." };
@@ -45,15 +37,7 @@ export async function lockUsers(clerkIds) {
 }
 
 export async function unlockUsers(clerkIds) {
-  // 1. Verify Admin Role (Kept for security)
-  const { userId: requestingUserId } = await auth();
-  if (!requestingUserId) {
-    return { success: false, error: "Unauthorized" };
-  }
-  const isAdminUser = await isAdmin(requestingUserId);
-  if (!isAdminUser) {
-    return { success: false, error: "Forbidden" };
-  }
+  await adminPermissionsCheck();
 
   if (!Array.isArray(clerkIds) || clerkIds.length === 0) {
     return { success: false, error: "Invalid or empty user IDs provided." };
@@ -80,14 +64,7 @@ export async function unlockUsers(clerkIds) {
 
 export async function deleteUsers(clerkIds) {
   // 1. Verify Admin Role (Kept for security)
-  const { userId: requestingUserId } = await auth();
-  if (!requestingUserId) {
-    return { success: false, error: "Unauthorized" };
-  }
-  const isAdminUser = await isAdmin(requestingUserId);
-  if (!isAdminUser) {
-    return { success: false, error: "Forbidden" };
-  }
+  await adminPermissionsCheck();
 
   // 2. Input Validation
   if (!Array.isArray(clerkIds) || clerkIds.length === 0) {
@@ -164,5 +141,31 @@ export async function deleteUsers(clerkIds) {
   } catch (error) {
     console.error("Unexpected error in deleteUsers action:", error);
     return { success: false, error: "An unexpected server error occurred." };
+  }
+}
+
+export async function setAdmin() {
+  await adminPermissionsCheck();
+  console.log("setAdmin function called");
+}
+
+export async function setMember() {
+  await adminPermissionsCheck();
+  console.log("setMember function called");
+}
+
+// --- Fetch Users Table Data ---
+export async function fetchUsersForAdmin() {
+  let users = [];
+  try {
+    users = await prisma.user.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return users;
+  } catch (error) {
+    console.error("Error fetching users for admin panel:", error);
+    throw error;
   }
 }
