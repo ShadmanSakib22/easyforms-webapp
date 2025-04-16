@@ -24,9 +24,17 @@ import {
   Ban,
   LockKeyholeIcon,
   LockKeyholeOpen,
+  Shield,
+  ShieldOff,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import { lockUsers, unlockUsers, deleteUsers } from "./actions";
+import {
+  lockUsers,
+  unlockUsers,
+  deleteUsers,
+  setAdmin,
+  setMember,
+} from "./actions";
 import toast, { Toaster } from "react-hot-toast";
 
 // --- Status/Role Styling Maps ---
@@ -328,18 +336,46 @@ const UserTable = ({ initialUsers }) => {
         </div>
         <div className="flex flex-wrap gap-2">
           <button
-            className={`btn btn-error btn-sm ${
+            className={`btn btn-secondary btn-sm ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            onClick={handleDelete}
+            onClick={handleSetAdmin}
             disabled={selectedRowCount === 0 || isPending}
           >
             {isPending ? (
               <span className="loading loading-spinner loading-xs"></span>
             ) : (
-              <Ban className="w-4 h-4" />
+              <Shield className="w-4 h-4" />
             )}
-            Delete ({selectedRowCount})
+            Promote ({selectedRowCount})
+          </button>
+          <button
+            className={`btn btn-warning btn-sm ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleSetMember}
+            disabled={selectedRowCount === 0 || isPending}
+          >
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <ShieldOff className="w-4 h-4" />
+            )}
+            Demote ({selectedRowCount})
+          </button>
+          <button
+            className={`btn btn-success btn-sm ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleUnlock}
+            disabled={selectedRowCount === 0 || isPending}
+          >
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <LockKeyholeOpen className="w-4 h-4" />
+            )}
+            Unlock ({selectedRowCount})
           </button>
           <button
             className={`btn btn-warning btn-sm ${
@@ -356,18 +392,18 @@ const UserTable = ({ initialUsers }) => {
             Lock ({selectedRowCount})
           </button>
           <button
-            className={`btn btn-success btn-sm ${
+            className={`btn btn-error btn-sm ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            onClick={handleUnlock}
+            onClick={handleDelete}
             disabled={selectedRowCount === 0 || isPending}
           >
             {isPending ? (
               <span className="loading loading-spinner loading-xs"></span>
             ) : (
-              <LockKeyholeOpen className="w-4 h-4" />
+              <Ban className="w-4 h-4" />
             )}
-            Unlock ({selectedRowCount})
+            Delete ({selectedRowCount})
           </button>
         </div>
       </div>

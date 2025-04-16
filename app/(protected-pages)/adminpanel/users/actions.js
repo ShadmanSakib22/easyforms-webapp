@@ -1,4 +1,4 @@
-//app/(protected-pages)/adminpanel/actions.js
+//app/(protected-pages)/adminpanel/users/actions.js
 
 "use server";
 
@@ -144,14 +144,56 @@ export async function deleteUsers(clerkIds) {
   }
 }
 
-export async function setAdmin() {
+export async function setAdmin(clerkIds) {
   await adminPermissionsCheck();
-  console.log("setAdmin function called");
+
+  if (!Array.isArray(clerkIds) || clerkIds.length === 0) {
+    return { success: false, error: "Invalid or empty user IDs provided." };
+  }
+  try {
+    await prisma.user.updateMany({
+      where: {
+        clerkId: {
+          in: clerkIds,
+        },
+        role: { not: "admin" },
+      },
+      data: { role: "admin" },
+    });
+    return {
+      success: true,
+      message: "Selected User(s) Promoted",
+    };
+  } catch (error) {
+    console.error("Error Promoting User(s):", error);
+    return { success: false, error: "Failed to update user role." };
+  }
 }
 
-export async function setMember() {
+export async function setMember(clerkIds) {
   await adminPermissionsCheck();
-  console.log("setMember function called");
+
+  if (!Array.isArray(clerkIds) || clerkIds.length === 0) {
+    return { success: false, error: "Invalid or empty user IDs provided." };
+  }
+  try {
+    await prisma.user.updateMany({
+      where: {
+        clerkId: {
+          in: clerkIds,
+        },
+        role: { not: "member" },
+      },
+      data: { role: "member" },
+    });
+    return {
+      success: true,
+      message: "Selected User(s) Demoted",
+    };
+  } catch (error) {
+    console.error("Error Demoting User(s):", error);
+    return { success: false, error: "Failed to update user role." };
+  }
 }
 
 // --- Fetch Users Table Data ---
