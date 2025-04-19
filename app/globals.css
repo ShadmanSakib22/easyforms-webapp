@@ -12,3 +12,48 @@
 body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+/* markdown editor styles */
+.custom-markdown .CodeMirror {
+  @apply bg-base-100 text-base-content rounded-md border border-base-300;
+}
+
+.custom-markdown .editor-toolbar {
+  @apply bg-base-200 border-base-300 text-base-content flex gap-1;
+}
+
+.custom-markdown .editor-toolbar button:hover {
+  @apply bg-base-300 border-base-content;
+}
+
+.custom-markdown .editor-toolbar button.active {
+  @apply bg-base-300 border-base-content;
+}
+
+.custom-markdown .EasyMDEContainer .CodeMirror {
+  @apply border-base-300! rounded-t-none! text-base-content;
+}
+
+.custom-markdown .CodeMirror-scroll {
+  @apply min-h-[100px]!;
+}
+
+.custom-markdown .CodeMirror-selected {
+  @apply bg-base-300!;
+}
+
+.custom-markdown .CodeMirror-line::selection,
+.custom-markdown .CodeMirror-line > span::selection,
+.custom-markdown .CodeMirror-line > span > span::selection {
+  @apply bg-base-300!;
+}
+
+.custom-markdown .CodeMirror-line::-moz-selection,
+.custom-markdown .CodeMirror-line > span::-moz-selection,
+.custom-markdown .CodeMirror-line > span > span::-moz-selection {
+  @apply bg-base-300!;
+}
+
+.custom-markdown .editor-preview {
+  @apply bg-base-100! text-base-content!;
+}
