@@ -41,13 +41,11 @@ body {
 .custom-markdown .CodeMirror-selected {
   @apply bg-base-300!;
 }
-
 .custom-markdown .CodeMirror-line::selection,
 .custom-markdown .CodeMirror-line > span::selection,
 .custom-markdown .CodeMirror-line > span > span::selection {
   @apply bg-base-300!;
 }
-
 .custom-markdown .CodeMirror-line::-moz-selection,
 .custom-markdown .CodeMirror-line > span::-moz-selection,
 .custom-markdown .CodeMirror-line > span > span::-moz-selection {
