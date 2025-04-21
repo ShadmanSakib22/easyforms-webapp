@@ -13,6 +13,8 @@ import {
   Mail,
   Settings,
   MessageCircleX,
+  ArrowLeft,
+  NotebookPen,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "easymde/dist/easymde.min.css";
@@ -49,11 +51,29 @@ export default function CreateTemplatePage() {
   } = useTemplateStore();
 
   return (
-    <div className="container mx-auto my-[5rem]">
-      <h1 className="text-2xl font-bold mb-4">Create a New Template</h1>
+    <div className="container mx-auto my-[5rem] px-4">
+      <div className="mb-8">
+        <Link
+          href="/templates/create"
+          className="btn btn-sm btn-warning btn-outline"
+        >
+          <ArrowLeft size={16} className="mr-1" /> Return to Dashboard
+        </Link>
+      </div>
 
-      <div className="p-4 bg-base-200 border border-base-300 rounded-xl">
-        <blockquote className="mb-4 label inline-flex py-2 px-4 bg-base-300 border border-primary/40 rounded-2xl uppercase font-mono text-sm">
+      <h1 className="text-center text-3xl text-primary font-mono font-bold mb-4">
+        📒 Create New Template
+      </h1>
+
+      <p className="max-w-2xl text-center mx-auto mb-[3.5rem] text-base-content/80">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt alias
+        asperiores assumenda, officia molestiae delectus voluptatem quae omnis
+        hic cupiditate natus repellendus dolores dolorum? At laboriosam amet
+        dicta voluptate non.
+      </p>
+
+      <div className="max-w-[1100px] mx-auto p-4 bg-base-200 border border-base-300 rounded-xl">
+        <blockquote className="badge badge-accent badge-outline font-mono mb-4">
           Metadata
         </blockquote>
         <div className="grid gap-4">
@@ -74,8 +94,6 @@ export default function CreateTemplatePage() {
               toolbar: [
                 "bold",
                 "italic",
-                "link",
-                "image",
                 "preview",
                 {
                   name: "save",
@@ -108,7 +126,7 @@ export default function CreateTemplatePage() {
             <label className="input border-base-300 w-full">
               <UploadCloud className="w-5 h-5 text-primary" />
               <input
-                placeholder="Thumbnail URL"
+                placeholder="Thumbnail URL (For best results, use height upto 240px)"
                 value={thumbnailUrl}
                 onChange={(e) => setThumbnailUrl(e.target.value)}
               />
@@ -193,18 +211,10 @@ export default function CreateTemplatePage() {
               /* TODO: Select exisiting template in db with autocomplete  dropdown */
             />
           ) : (
-            <>
-              <div className="flex justify-between items-center mt-[3rem] border-t-2 border-dashed border-primary pt-4">
-                <blockquote className="label inline-flex py-2 px-4 bg-base-300 border border-primary/40 rounded-2xl uppercase font-mono text-sm">
-                  Questions
-                </blockquote>
-                <button
-                  onClick={addQuestion}
-                  className="btn btn-primary btn-outline"
-                >
-                  <Plus className="w-4 h-4 mr-1" /> Add Question
-                </button>
-              </div>
+            <div className="mt-[3rem] pt-4 border-t-2 border-dashed border-primary">
+              <blockquote className="badge badge-accent badge-outline font-mono mb-4">
+                Questions
+              </blockquote>
 
               {/* Questions Map - DND */}
               <DragDropContext
@@ -421,20 +431,26 @@ export default function CreateTemplatePage() {
                         </Draggable>
                       ))}
                       {provided.placeholder}
+                      <button
+                        onClick={addQuestion}
+                        className="btn btn-primary btn-outline"
+                      >
+                        <Plus className="w-4 h-4 mr-1" /> Add Question
+                      </button>
                     </div>
                   )}
                 </Droppable>
               </DragDropContext>
-            </>
+            </div>
           )}
 
           <div className="flex justify-end gap-3 mt-6">
             <Link href="/templates/preview">
-              <button className="btn btn-outline btn-primary">
+              <button className="btn btn-secondary">
                 <Eye className="w-4 h-4 mr-1" /> Preview
               </button>
             </Link>
-            <button className="btn btn-primary">
+            <button className="btn btn-success">
               <Settings className="w-4 h-4 mr-1" /> Publish
             </button>
           </div>
