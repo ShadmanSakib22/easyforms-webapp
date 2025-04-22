@@ -9,26 +9,46 @@ import remarkGfm from "remark-gfm";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 
 function ViewQuestion({ question, index }) {
-  const { type, label, placeholder, options } = question;
+  const { type, label, description, placeholder, marks, options, show } =
+    question;
+  if (!show) return null;
 
   return (
     <div className="mb-6 p-4 border border-base-300 rounded-lg bg-base-100 shadow-sm">
-      <div className="mb-2">
-        <strong className="font-semibold text-base-content/90 mr-2">
+      <div className="mb-2 relative">
+        <div className="btn btn-circle btn-xs btn-primary mr-2 absolute top-0 right-0">
+          {marks}
+        </div>
+        <strong className="font-semibold text-primary mr-2">
           Q{index + 1}:
         </strong>
-        {/* Render label - Containing Markdown from SimpleMDE */}
-        <div className="inline prose prose-sm max-w-none text-base-content">
+
+        <strong className="font-bold text-base-content/70 w-[80%]">
+          {label || "*No question text*"}
+        </strong>
+        <br />
+        {/* Description with Markdown support */}
+        <div className="inline prose prose-xs max-w-none text-base-content">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            components={{ p: React.Fragment }}
+            components={{
+              p: React.Fragment, // Prevent wrapping in <p> if needed
+              img: ({ node, ...props }) => (
+                <img
+                  {...props}
+                  style={{ maxHeight: "180px" }}
+                  className="rounded-md"
+                  alt={props.alt || "markdown image"}
+                />
+              ),
+            }}
           >
-            {label || "*No question text*"}
+            {description}
           </ReactMarkdown>
         </div>
       </div>
 
-      {/* Render appropriate disabled input based on type */}
+      {/* Render appropriate input based on type */}
       {type === "single-line" && (
         <input
           type="text"
@@ -91,33 +111,46 @@ export default function PreviewTemplatePage() {
 
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         {/* Render Title */}
-        <h1 className="text-3xl font-bold mb-2">
+        <h1 className="text-3xl font-mono font-bold mb-2">
           {title || "*Untitled Form*"}
         </h1>
 
-        {/* Render Description using Markdown */}
-        {description && (
-          <div className="mb-4 pb-4 prose prose-sm text-base-content/90">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml={false}>
-              {description}
-            </ReactMarkdown>
-          </div>
-        )}
-        {!description && (
-          <div className="mb-4 pb-4 text-base-content/50 italic">
-            *No description provided*
-          </div>
-        )}
-        {/* Render Thumbnail */}
-        {thumbnailUrl && (
-          <div className="mb-8">
-            <img
-              src={thumbnailUrl}
-              alt="Thumbnail"
-              className="rounded-lg object-cover w-auto h-[240px]"
-            />
-          </div>
-        )}
+        <div className="flex flex-col md:flex-row gap-y-4 gap-x-5 mb-8 justify-between">
+          {/* Render Description using Markdown */}
+          {description && (
+            <div className="flex-1 prose prose-sm text-base-content/90">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                skipHtml={false}
+                components={{
+                  img: ({ alt }) => (
+                    <span className="text-warning font-semibold">
+                      ⚠️ Image not allowed {alt ? `(${alt})` : ""}
+                    </span>
+                  ),
+                }}
+              >
+                {description}
+              </ReactMarkdown>
+            </div>
+          )}
+          {!description && (
+            <div className="mb-4 pb-4 text-base-content/50 italic">
+              *No description provided*
+            </div>
+          )}
+
+          {/* Render Thumbnail */}
+          {thumbnailUrl && (
+            <div>
+              <img
+                src={thumbnailUrl}
+                alt="Thumbnail"
+                className="block shadow max-h-[240px] w-auto aspect-square object-cover bg-base-300 rounded"
+              />
+            </div>
+          )}
+        </div>
 
         {/* Render Questions */}
         <div className="space-y-6">

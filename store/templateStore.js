@@ -32,6 +32,9 @@ export const useTemplateStore = create((set) => ({
         {
           id: questionIdCounter++,
           label: "",
+          description: "",
+          marks: 1,
+          show: true,
           type: "single-line",
           placeholder: "",
           options: [],

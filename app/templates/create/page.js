@@ -9,13 +9,12 @@ import {
   Plus,
   Trash,
   Eye,
-  UploadCloud,
   Mail,
   Settings,
   MessageCircleX,
   ArrowLeft,
-  NotebookPen,
 } from "lucide-react";
+import ImageUploader from "@/app/_components/ImageUploader";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "easymde/dist/easymde.min.css";
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
@@ -94,6 +93,8 @@ export default function CreateTemplatePage() {
               toolbar: [
                 "bold",
                 "italic",
+                "heading-smaller",
+                "link",
                 "preview",
                 {
                   name: "save",
@@ -123,15 +124,7 @@ export default function CreateTemplatePage() {
               {/* TODO: Implement tags input with autocomplete from db */}
             </label>
 
-            <label className="input border-base-300 w-full">
-              <UploadCloud className="w-5 h-5 text-primary" />
-              <input
-                placeholder="Thumbnail URL (For best results, use height upto 240px)"
-                value={thumbnailUrl}
-                onChange={(e) => setThumbnailUrl(e.target.value)}
-              />
-              {/* TODO: Implement thumbnail upload with cloudinary */}
-            </label>
+            <ImageUploader value={thumbnailUrl} onChange={setThumbnailUrl} />
           </div>
 
           <div className="flex flex-wrap gap-4">
@@ -246,11 +239,11 @@ export default function CreateTemplatePage() {
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              className={`p-4 border border-dashed border-primary rounded-lg flex flex-col gap-2 bg-base-100 ${
+                              className={`p-4 border border-dashed border-primary rounded-lg flex flex-col gap-4 bg-base-100 ${
                                 snapshot.isDragging ? "shadow-lg" : ""
                               }`}
                             >
-                              <div className="flex justify-between items-center">
+                              <div className="flex flex-wrap gap-4 justify-between items-center">
                                 <span
                                   className="text-primary font-mono text-nowrap cursor-move"
                                   {...provided.dragHandleProps}
@@ -259,8 +252,25 @@ export default function CreateTemplatePage() {
                                 </span>
 
                                 <div className="flex gap-2 items-center">
+                                  <label className="input input-sm border-primary w-[100px]">
+                                    <span className="font-mono text-primary text-xs">
+                                      Mark:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min={1}
+                                      value={q.marks}
+                                      onChange={(e) =>
+                                        handleQuestionChange(
+                                          q.id,
+                                          "marks",
+                                          parseInt(e.target.value) || 1
+                                        )
+                                      }
+                                    />
+                                  </label>
                                   <select
-                                    className="select select-sm text-primary border-primary"
+                                    className="select select-sm text-primary border-primary w-[140px]"
                                     value={q.type}
                                     onChange={(e) =>
                                       handleQuestionChange(
@@ -288,42 +298,39 @@ export default function CreateTemplatePage() {
                                 </div>
                               </div>
 
-                              <SimpleMDE
-                                className="custom-markdown"
+                              <input
+                                type="text"
+                                className="input bg-base-200 border-base-300 w-full"
+                                placeholder="Question Title"
                                 value={q.label}
-                                placeholder="Enter question text (Markdown supported)"
-                                options={{
-                                  toolbar: [
-                                    "bold",
-                                    "italic",
-                                    "link",
-                                    "image",
-                                    "preview",
-                                    {
-                                      name: "save",
-                                      action(editor) {
-                                        const value = editor.value();
-                                        handleQuestionChange(
-                                          q.id,
-                                          "label",
-                                          value
-                                        );
-                                      },
-                                      className: "fa fa-save",
-                                      title: "Save",
-                                    },
-                                    "guide",
-                                  ],
-                                  spellChecker: false,
-                                  status: false,
-                                }}
+                                onChange={(e) =>
+                                  handleQuestionChange(
+                                    q.id,
+                                    "label",
+                                    e.target.value
+                                  )
+                                }
+                              />
+
+                              <textarea
+                                className="textarea bg-base-200 border-base-300 w-full"
+                                placeholder="Question Description (optional) - Supports Markdown"
+                                rows={3}
+                                value={q.description}
+                                onChange={(e) =>
+                                  handleQuestionChange(
+                                    q.id,
+                                    "description",
+                                    e.target.value
+                                  )
+                                }
                               />
 
                               {q.type === "single-line" && (
                                 <input
                                   type="text"
                                   placeholder="Single-line placeholder (optional)"
-                                  className="input border-primary w-full"
+                                  className="input bg-base-200 border-base-300 w-full"
                                   value={q.placeholder}
                                   onChange={(e) =>
                                     handleQuestionChange(
@@ -338,7 +345,7 @@ export default function CreateTemplatePage() {
                               {q.type === "multi-line" && (
                                 <textarea
                                   placeholder="Multi-line placeholder (optional)"
-                                  className="textarea border-primary w-full"
+                                  className="textarea bg-base-200 border-base-300 w-full"
                                   rows={4}
                                   value={q.placeholder}
                                   onChange={(e) =>
@@ -355,7 +362,7 @@ export default function CreateTemplatePage() {
                                 <input
                                   type="number"
                                   placeholder="Numeric placeholder (optional)"
-                                  className="input border-primary w-full"
+                                  className="input bg-base-200 border-base-300 w-full"
                                   value={q.placeholder}
                                   onChange={(e) =>
                                     handleQuestionChange(
@@ -379,7 +386,7 @@ export default function CreateTemplatePage() {
                                         placeholder={`Option ${String.fromCharCode(
                                           65 + index
                                         )}`}
-                                        className="input border-primary"
+                                        className="input border-primary/20"
                                         value={opt.text}
                                         onChange={(e) =>
                                           handleOptionChange(
@@ -417,7 +424,6 @@ export default function CreateTemplatePage() {
                                       </button>
                                     </div>
                                   ))}
-
                                   <button
                                     onClick={() => addOptionToQuestion(q.id)}
                                     className="btn btn-sm btn-outline btn-primary mt-2 w-fit"
@@ -426,10 +432,30 @@ export default function CreateTemplatePage() {
                                   </button>
                                 </div>
                               )}
+
+                              <label className="label cursor-pointer justify-end">
+                                <span className="font-mono text-base-content/70 text-xs">
+                                  Visibility:
+                                </span>
+                                <input
+                                  type="checkbox"
+                                  className="toggle toggle-sm toggle-success"
+                                  checked={q.show}
+                                  onChange={(e) =>
+                                    handleQuestionChange(
+                                      q.id,
+                                      "show",
+                                      e.target.checked,
+                                      console.log(q.show)
+                                    )
+                                  }
+                                />
+                              </label>
                             </div>
                           )}
                         </Draggable>
                       ))}
+
                       {provided.placeholder}
                       <button
                         onClick={addQuestion}
