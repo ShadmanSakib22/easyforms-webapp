@@ -6,23 +6,21 @@ let optionIdCounter = 0;
 export const useTemplateStore = create((set) => ({
   title: "",
   description: "",
+  topic: "general",
   tags: "",
   thumbnailUrl: "",
   invitedUsers: "",
   accessType: "public",
-  selectedMode: "new",
-  selectedTemplate: "",
   questions: [],
 
   // Setters
   setTitle: (title) => set({ title }),
   setDescription: (description) => set({ description }),
+  setTopic: (topic) => set({ topic }),
   setTags: (tags) => set({ tags }),
   setThumbnailUrl: (thumbnailUrl) => set({ thumbnailUrl }),
   setInvitedUsers: (invitedUsers) => set({ invitedUsers }),
   setAccessType: (accessType) => set({ accessType }),
-  setSelectedMode: (selectedMode) => set({ selectedMode }),
-  setSelectedTemplate: (selectedTemplate) => set({ selectedTemplate }),
   setQuestions: (questions) => set({ questions }),
 
   addQuestion: () =>
@@ -35,6 +33,7 @@ export const useTemplateStore = create((set) => ({
           description: "",
           marks: 1,
           show: true,
+          required: false,
           type: "single-line",
           placeholder: "",
           options: [],
@@ -56,16 +55,32 @@ export const useTemplateStore = create((set) => ({
 
   handleOptionChange: (qId, optId, field, value) =>
     set((state) => ({
-      questions: state.questions.map((q) =>
-        q.id === qId
-          ? {
-              ...q,
-              options: q.options.map((opt) =>
-                opt.id === optId ? { ...opt, [field]: value } : opt
-              ),
-            }
-          : q
-      ),
+      questions: state.questions.map((q) => {
+        if (q.id !== qId) return q;
+
+        // If the type is 'radio-checkbox' and setting isCorrect true
+        if (
+          q.type === "radio-checkbox" &&
+          field === "isCorrect" &&
+          value === true
+        ) {
+          return {
+            ...q,
+            options: q.options.map((opt) =>
+              opt.id === optId
+                ? { ...opt, isCorrect: true }
+                : { ...opt, isCorrect: false }
+            ),
+          };
+        }
+
+        return {
+          ...q,
+          options: q.options.map((opt) =>
+            opt.id === optId ? { ...opt, [field]: value } : opt
+          ),
+        };
+      }),
     })),
 
   addOptionToQuestion: (qId) =>

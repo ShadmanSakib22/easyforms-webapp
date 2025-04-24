@@ -9,8 +9,16 @@ import remarkGfm from "remark-gfm";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 
 function ViewQuestion({ question, index }) {
-  const { type, label, description, placeholder, marks, options, show } =
-    question;
+  const {
+    type,
+    label,
+    description,
+    placeholder,
+    marks,
+    options,
+    show,
+    required,
+  } = question;
   if (!show) return null;
 
   return (
@@ -24,7 +32,8 @@ function ViewQuestion({ question, index }) {
         </strong>
 
         <strong className="font-bold text-base-content/70 w-[80%]">
-          {label || "*No question text*"}
+          {label || "No question text"}
+          {required ? "*" : ""}
         </strong>
         <br />
         {/* Description with Markdown support */}
@@ -75,17 +84,42 @@ function ViewQuestion({ question, index }) {
             Can Select Multiple:
           </p>
           {options && options.length > 0 ? (
-            options.map((opt) => (
+            options.map((opt, index) => (
               <label key={opt.id} className="flex items-center gap-2 text-sm">
                 <input type="checkbox" className="checkbox checkbox-sm" />
                 <span className="label-text text-base-content/80">
-                  {opt.text || `Option ${opt.id}`}
+                  {opt.text || `Option ${index + 1}`}
                 </span>
               </label>
             ))
           ) : (
             <p className="text-xs text-error italic">
               Error: No options defined for this checkbox group.
+            </p>
+          )}
+        </div>
+      )}
+      {type === "radio-checkbox" && (
+        <div className="mt-2 space-y-2 pl-2">
+          <p className="font-mono text-xs text-base-content/70">
+            Can Select Only One:
+          </p>
+          {options && options.length > 0 ? (
+            options.map((opt, index) => (
+              <label key={opt.id} className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name={`radio-question-${index}`}
+                  className="radio radio-sm"
+                />
+                <span className="label-text text-base-content/80">
+                  {opt.text || `Option ${index + 1}`}
+                </span>
+              </label>
+            ))
+          ) : (
+            <p className="text-xs text-error italic">
+              Error: No options defined for this radio group.
             </p>
           )}
         </div>
@@ -99,6 +133,8 @@ export default function PreviewTemplatePage() {
   const title = useTemplateStore((state) => state.title);
   const description = useTemplateStore((state) => state.description);
   const thumbnailUrl = useTemplateStore((state) => state.thumbnailUrl);
+  const topic = useTemplateStore((state) => state.topic);
+  const tags = useTemplateStore((state) => state.tags);
   const questions = useTemplateStore((state) => state.questions);
 
   return (
@@ -111,35 +147,35 @@ export default function PreviewTemplatePage() {
 
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         {/* Render Title */}
-        <h1 className="text-3xl font-mono font-bold mb-2">
+        <h1 className="text-2xl font-mono font-bold mb-2">
           {title || "*Untitled Form*"}
         </h1>
 
-        <div className="flex flex-col md:flex-row gap-y-4 gap-x-5 mb-8 justify-between">
-          {/* Render Description using Markdown */}
-          {description && (
-            <div className="flex-1 prose prose-sm text-base-content/90">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                skipHtml={false}
-                components={{
-                  img: ({ alt }) => (
-                    <span className="text-warning font-semibold">
-                      ⚠️ Image not allowed {alt ? `(${alt})` : ""}
-                    </span>
-                  ),
-                }}
-              >
-                {description}
-              </ReactMarkdown>
-            </div>
-          )}
-          {!description && (
-            <div className="mb-4 pb-4 text-base-content/50 italic">
-              *No description provided*
-            </div>
-          )}
+        {/* Render Description using Markdown */}
+        {description && (
+          <div className="flex-1 prose prose-sm text-base-content/90">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              skipHtml={false}
+              components={{
+                img: ({ alt }) => (
+                  <span className="text-warning font-semibold">
+                    ⚠️ Image not allowed {alt ? `(${alt})` : ""}
+                  </span>
+                ),
+              }}
+            >
+              {description}
+            </ReactMarkdown>
+          </div>
+        )}
+        {!description && (
+          <div className="mb-4 pb-4 text-base-content/50 italic">
+            *No description provided*
+          </div>
+        )}
 
+        <div className="flex flex-wrap gap-6 mt-4 mb-[3rem]">
           {/* Render Thumbnail */}
           {thumbnailUrl && (
             <div>
@@ -148,6 +184,31 @@ export default function PreviewTemplatePage() {
                 alt="Thumbnail"
                 className="block shadow max-h-[240px] w-auto aspect-square object-cover bg-base-300 rounded"
               />
+            </div>
+          )}
+          {/* Render Topic & tags*/}
+          {topic && (
+            <div>
+              <h4 className="badge border-primary bg-base-300 mt-8 capitalize font-semibold font-mono text-base-content/90">
+                Topic: <span className="font-normal">{topic}</span>
+              </h4>
+              <div className="mt-4 rounded-box bg-base-300 p-4">
+                <h4 className="text-sm capitalize font-mono text-primary mb-2">
+                  Tags:
+                </h4>
+                {/* Map tags with badge */}
+                <p className="badge">placeholderTag</p>
+              </div>
+              <p className="mt-4 text-sm text-base-content/70">
+                Published on:{" "}
+                <span className="font-semibold">Placeholder Date</span>
+              </p>
+              <p className="mt-2 text-sm text-base-content/70">
+                Signed in as:{" "}
+                <span className="font-semibold text-primary">
+                  Placeholder Email
+                </span>
+              </p>
             </div>
           )}
         </div>
