@@ -31,7 +31,6 @@ export const useTemplateStore = create((set) => ({
           id: questionIdCounter++,
           label: "",
           description: "",
-          marks: 1,
           show: true,
           required: false,
           type: "single-line",
@@ -58,22 +57,6 @@ export const useTemplateStore = create((set) => ({
       questions: state.questions.map((q) => {
         if (q.id !== qId) return q;
 
-        // If the type is 'radio-checkbox' and setting isCorrect true
-        if (
-          q.type === "radio-checkbox" &&
-          field === "isCorrect" &&
-          value === true
-        ) {
-          return {
-            ...q,
-            options: q.options.map((opt) =>
-              opt.id === optId
-                ? { ...opt, isCorrect: true }
-                : { ...opt, isCorrect: false }
-            ),
-          };
-        }
-
         return {
           ...q,
           options: q.options.map((opt) =>
@@ -90,10 +73,7 @@ export const useTemplateStore = create((set) => ({
           ? q.options.length < 4
             ? {
                 ...q,
-                options: [
-                  ...q.options,
-                  { id: optionIdCounter++, text: "", isCorrect: false },
-                ],
+                options: [...q.options, { id: optionIdCounter++, text: "" }],
               }
             : q // return the original question if already 4 options
           : q

@@ -9,24 +9,13 @@ import remarkGfm from "remark-gfm";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 
 function ViewQuestion({ question, index }) {
-  const {
-    type,
-    label,
-    description,
-    placeholder,
-    marks,
-    options,
-    show,
-    required,
-  } = question;
+  const { type, label, description, placeholder, options, show, required } =
+    question;
   if (!show) return null;
 
   return (
     <div className="mb-6 p-4 border border-base-300 rounded-lg bg-base-100 shadow-sm">
-      <div className="mb-2 relative">
-        <div className="btn btn-circle btn-xs btn-primary mr-2 absolute top-0 right-0">
-          {marks}
-        </div>
+      <div className="mb-2">
         <strong className="font-semibold text-primary mr-2">
           Q{index + 1}:
         </strong>

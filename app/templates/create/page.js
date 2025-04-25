@@ -2,13 +2,21 @@
 "use client";
 
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import { Eye, Settings, ArrowLeft } from "lucide-react";
+import { isLocked } from "@/app/_actions/commonActions";
 import TemplateMetadata from "@/app/_components/TemplateMetadata";
 import DraggableQuestionsList from "@/app/_components/DraggableQuestionsList";
 import { useTemplateStore } from "@/store/templateStore";
 
-export default function CreateTemplatePage() {
+export default async function CreateTemplatePage() {
+  const locked = await isLocked();
+
+  if (locked) {
+    redirect("/locked");
+  }
+
   const {
     title,
     description,

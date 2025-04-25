@@ -32,21 +32,6 @@ export default function QuestionItem({
         </span>
 
         <div className="flex gap-2 items-center">
-          <label className="input input-sm border-primary w-[100px]">
-            <span className="font-mono text-primary text-xs">Mark:</span>
-            <input
-              type="number"
-              min={1}
-              value={q.marks}
-              onChange={(e) =>
-                handleQuestionChange(
-                  q.id,
-                  "marks",
-                  parseInt(e.target.value) || 1
-                )
-              }
-            />
-          </label>
           <select
             className="select select-sm text-primary border-primary w-[140px]"
             value={q.type}
@@ -139,22 +124,6 @@ export default function QuestionItem({
                   handleOptionChange(q.id, opt.id, "text", e.target.value)
                 }
               />
-              <label className="btn btn-sm bg-base-300 text-success">
-                Correct
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-xs checkbox-success"
-                  checked={opt.isCorrect}
-                  onChange={(e) =>
-                    handleOptionChange(
-                      q.id,
-                      opt.id,
-                      "isCorrect",
-                      e.target.checked
-                    )
-                  }
-                />
-              </label>
               <button
                 onClick={() => removeOptionFromQuestion(q.id, opt.id)}
                 className="btn btn-sm bg-base-300 text-error"
