@@ -1,8 +1,9 @@
 "use client";
 
-import { Tags, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import ImageUploader from "@/app/_components/ImageUploader";
 import MarkdownEditor from "@/app/_components/MarkdownEditor";
+import TagInput from "@/app/_components/TagInput";
 
 export default function TemplateMetadata({
   title,
@@ -60,14 +61,7 @@ export default function TemplateMetadata({
                 <option value="entertainment">Entertainment</option>
               </select>
             </label>
-            <label className="input w-full bg-base-200 border-base-300">
-              <Tags className="w-5 h-5 text-primary" />
-              <input
-                placeholder="Tags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
-            </label>
+            <TagInput tags={tags} setTags={setTags} />
           </fieldset>
 
           <fieldset className="fieldset bg-base-100 border-base-300 rounded-box border p-4">

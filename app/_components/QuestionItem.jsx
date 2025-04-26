@@ -154,23 +154,6 @@ export default function QuestionItem({
                   handleOptionChange(q.id, opt.id, "text", e.target.value)
                 }
               />
-              <label className="btn btn-sm bg-base-300 text-success">
-                Correct
-                <input
-                  type="radio"
-                  className="radio radio-success"
-                  name={`radio-${q.id}`}
-                  checked={opt.isCorrect}
-                  onChange={(e) =>
-                    handleOptionChange(
-                      q.id,
-                      opt.id,
-                      "isCorrect",
-                      e.target.checked
-                    )
-                  }
-                />
-              </label>
               <button
                 onClick={() => removeOptionFromQuestion(q.id, opt.id)}
                 className="btn btn-sm bg-base-300 text-error"

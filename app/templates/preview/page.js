@@ -147,10 +147,14 @@ export default function PreviewTemplatePage() {
               remarkPlugins={[remarkGfm]}
               skipHtml={false}
               components={{
-                img: ({ alt }) => (
-                  <span className="text-warning font-semibold">
-                    ⚠️ Image not allowed {alt ? `(${alt})` : ""}
-                  </span>
+                p: React.Fragment, // Prevent wrapping in <p> if needed
+                img: ({ node, ...props }) => (
+                  <img
+                    {...props}
+                    style={{ maxHeight: "240px" }}
+                    className="rounded-md"
+                    alt={props.alt || "markdown image"}
+                  />
                 ),
               }}
             >
@@ -181,13 +185,6 @@ export default function PreviewTemplatePage() {
               <h4 className="badge border-primary bg-base-300 mt-8 capitalize font-semibold font-mono text-base-content/90">
                 Topic: <span className="font-normal">{topic}</span>
               </h4>
-              <div className="mt-4 rounded-box bg-base-300 p-4">
-                <h4 className="text-sm capitalize font-mono text-primary mb-2">
-                  Tags:
-                </h4>
-                {/* Map tags with badge */}
-                <p className="badge">placeholderTag</p>
-              </div>
               <p className="mt-4 text-sm text-base-content/70">
                 Published on:{" "}
                 <span className="font-semibold">Placeholder Date</span>
@@ -198,6 +195,26 @@ export default function PreviewTemplatePage() {
                   Placeholder Email
                 </span>
               </p>
+              <fieldset className="mt-4 fieldset bg-base-100 border-base-300 rounded-md border p-3 min-w-[300px] max-w-[600px]">
+                <legend className="fieldset-legend mb-[-10px]">
+                  Tagged By:
+                </legend>
+
+                <div className="flex flex-wrap gap-1">
+                  {tags.length > 0 ? (
+                    tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-base-100 text-primary border border-primary/20 rounded-md px-2 py-1 text-xs font-mono"
+                      >
+                        {tag}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-base-content/50">No tags added</span>
+                  )}
+                </div>
+              </fieldset>
             </div>
           )}
         </div>

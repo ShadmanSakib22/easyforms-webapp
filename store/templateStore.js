@@ -7,9 +7,9 @@ export const useTemplateStore = create((set) => ({
   title: "",
   description: "",
   topic: "general",
-  tags: "",
+  tags: [],
   thumbnailUrl: "",
-  invitedUsers: "",
+  invitedUsers: [],
   accessType: "public",
   questions: [],
 

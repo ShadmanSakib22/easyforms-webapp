@@ -55,3 +55,10 @@ body {
 .custom-markdown .editor-preview {
   @apply bg-base-100! text-base-content!;
 }
+
+/* markdown editor styles end */
+
+/* react-select styles */
+.react-select__indicators {
+  display: none !important;
+}

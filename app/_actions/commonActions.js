@@ -1,4 +1,5 @@
 // app/actions/commonActions.js
+"use server";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -42,6 +43,12 @@ export async function isLocked(optionalUserId) {
     return false;
   }
 }
+
+export const lockedRedirect = async () => {
+  if (await isLocked()) {
+    redirect("/locked");
+  }
+};
 
 export const adminPermissionsCheck = async () => {
   const { userId, redirectToSignIn } = await auth();
