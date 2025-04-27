@@ -12,6 +12,8 @@ export const useTemplateStore = create((set) => ({
   invitedUsers: [],
   accessType: "public",
   questions: [],
+  selectedMode: "new",
+  selectedTemplate: null,
 
   // Setters
   setTitle: (title) => set({ title }),
@@ -22,6 +24,8 @@ export const useTemplateStore = create((set) => ({
   setInvitedUsers: (invitedUsers) => set({ invitedUsers }),
   setAccessType: (accessType) => set({ accessType }),
   setQuestions: (questions) => set({ questions }),
+  setSelectedMode: (selectedMode) => set({ selectedMode }),
+  setSelectedTemplate: (selectedTemplate) => set({ selectedTemplate }),
 
   addQuestion: () =>
     set((state) => ({

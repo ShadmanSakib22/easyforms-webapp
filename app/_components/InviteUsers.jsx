@@ -1,8 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import Select from "react-select";
 import { fetchEmails } from "@/app/_actions/templateActions";
 import { Mail } from "lucide-react";
+import dynamic from "next/dynamic";
+const Select = dynamic(() => import("react-select"), {
+  ssr: false,
+});
 
 export default function InviteUsers({ invitedUsers, setInvitedUsers }) {
   const [allEmails, setAllEmails] = useState([]);

@@ -8,6 +8,7 @@ import TemplateMetadata from "@/app/_components/TemplateMetadata";
 import DraggableQuestionsList from "@/app/_components/DraggableQuestionsList";
 import { useTemplateStore } from "@/store/templateStore";
 import { publishTemplate } from "@/app/_actions/templateActions";
+import UseExistingQuestions from "@/app/_components/UseExistingQuestions";
 
 export default function CreateTemplatePage() {
   const {
@@ -18,6 +19,7 @@ export default function CreateTemplatePage() {
     thumbnailUrl,
     invitedUsers,
     questions,
+    selectedMode,
     setTitle,
     setDescription,
     setTopic,
@@ -32,9 +34,8 @@ export default function CreateTemplatePage() {
     handleOptionChange,
     addOptionToQuestion,
     removeOptionFromQuestion,
+    setSelectedMode,
   } = useTemplateStore();
-  const [selectedMode, setSelectedMode] = useState("new");
-  const [selectedTemplate, setSelectedTemplate] = useState(null); // Todo: select existing template from db
 
   const handlePublish = async () => {
     const payload = {
@@ -121,32 +122,23 @@ export default function CreateTemplatePage() {
             setSelectedMode={setSelectedMode}
           />
 
-          {selectedMode === "existing" ? (
-            <div className="flex mt-2 justify-end">
-              <input
-                className="input border-base-300"
-                placeholder="Select existing template"
-                /* TODO: Select exisiting template in db with autocomplete  dropdown */
-              />
-            </div>
-          ) : (
-            <div className="mt-[3rem] pt-4 border-t-2 border-dashed border-primary">
-              <blockquote className="badge badge-accent badge-outline font-mono mb-4">
-                Questions
-              </blockquote>
+          {selectedMode === "existing" ? <UseExistingQuestions /> : null}
+          <div className="mt-[3rem] pt-4 border-t-2 border-dashed border-primary">
+            <blockquote className="badge badge-accent badge-outline font-mono mb-4">
+              Questions
+            </blockquote>
 
-              <DraggableQuestionsList
-                questions={questions}
-                setQuestions={setQuestions}
-                handleQuestionChange={handleQuestionChange}
-                handleOptionChange={handleOptionChange}
-                removeQuestion={removeQuestion}
-                addQuestion={addQuestion}
-                addOptionToQuestion={addOptionToQuestion}
-                removeOptionFromQuestion={removeOptionFromQuestion}
-              />
-            </div>
-          )}
+            <DraggableQuestionsList
+              questions={questions}
+              setQuestions={setQuestions}
+              handleQuestionChange={handleQuestionChange}
+              handleOptionChange={handleOptionChange}
+              removeQuestion={removeQuestion}
+              addQuestion={addQuestion}
+              addOptionToQuestion={addOptionToQuestion}
+              removeOptionFromQuestion={removeOptionFromQuestion}
+            />
+          </div>
 
           {/* Preview Publish */}
           <div className="flex justify-end gap-3 mt-6">

@@ -1,13 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
-import CreatableSelect from "react-select/creatable";
+import { useDebounce } from "use-debounce";
 import { fetchTags } from "@/app/_actions/templateActions";
 import { Tags } from "lucide-react";
+import dynamic from "next/dynamic";
+const CreatableSelect = dynamic(() => import("react-select/creatable"), {
+  ssr: false,
+});
 
 export default function TagInput({ tags, setTags }) {
   const [allOptions, setAllOptions] = useState([]);
-  const [filteredOptions, setFilteredOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [debouncedInput] = useDebounce(inputValue, 300);
 
   useEffect(() => {
     const loadTags = async () => {
@@ -22,24 +26,16 @@ export default function TagInput({ tags, setTags }) {
     loadTags();
   }, []);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (inputValue.length >= 2) {
-        const filtered = allOptions.filter((tag) =>
-          tag.label.toLowerCase().includes(inputValue.toLowerCase())
-        );
-        setFilteredOptions(filtered);
-      } else {
-        setFilteredOptions([]);
-      }
-    }, 300); // 300ms debounce
-
-    return () => clearTimeout(handler);
-  }, [inputValue, allOptions]);
-
   const handleChange = (newValue) => {
     setTags(newValue.map((item) => item.value));
   };
+
+  const filteredOptions =
+    debouncedInput.length >= 2
+      ? allOptions.filter((tag) =>
+          tag.label.toLowerCase().includes(debouncedInput.toLowerCase())
+        )
+      : [];
 
   return (
     <div className="rounded-lg p-2 bg-base-100 border-base-300 border">
@@ -52,7 +48,7 @@ export default function TagInput({ tags, setTags }) {
         options={filteredOptions}
         value={tags.map((tag) => ({ value: tag, label: tag }))}
         onChange={handleChange}
-        onInputChange={(value) => setInputValue(value)}
+        onInputChange={setInputValue}
         placeholder="Add tags here..."
         classNamePrefix="react-select"
         classNames={{
@@ -63,12 +59,14 @@ export default function TagInput({ tags, setTags }) {
           multiValueLabel: () => "text-primary/60!",
           placeholder: () => "text-base-content/40! text-[13px]!",
           menu: () =>
-            "text-xs bg-base-300! rounded-none! px-2! py-0! text-sm! max-h-[240px]! overflow-y-auto!", // <<< fixed height + scroll
+            "text-xs bg-base-300! rounded-none! px-2! py-0! text-sm! max-h-[240px]! overflow-y-auto!",
           option: () =>
             "text-xs! cursor-pointer! rounded-md! bg-base-100! hover:bg-primary/40! my-1!",
         }}
         noOptionsMessage={() =>
-          inputValue.length < 2 ? "Type at least 2 letters" : "No tags found"
+          debouncedInput.length < 2
+            ? "Type at least 2 letters"
+            : "No tags found"
         }
       />
     </div>

@@ -89,3 +89,28 @@ export async function fetchEmails() {
 
   return users.map((user) => user.email);
 }
+
+export async function fetchTemplatesList() {
+  return await prisma.template.findMany({
+    select: {
+      id: true,
+      title: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export async function fetchTemplateById(templateId) {
+  return await prisma.template.findUnique({
+    where: { id: templateId },
+    include: {
+      questions: {
+        include: {
+          options: true,
+        },
+      },
+    },
+  });
+}

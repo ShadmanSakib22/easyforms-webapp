@@ -102,6 +102,7 @@ export default function TemplateMetadata({
                 name="mode"
                 className="radio radio-xs radio-primary"
                 value="existing"
+                checked={selectedMode === "existing"}
                 onChange={() => setSelectedMode("existing")}
               />
               Start with Existing Template
