@@ -1,9 +1,9 @@
 "use client";
 
-import { Mail } from "lucide-react";
 import ImageUploader from "@/app/_components/ImageUploader";
 import MarkdownEditor from "@/app/_components/MarkdownEditor";
 import TagInput from "@/app/_components/TagInput";
+import InviteUsers from "@/app/_components/InviteUsers";
 
 export default function TemplateMetadata({
   title,
@@ -46,37 +46,26 @@ export default function TemplateMetadata({
       <div className="flex flex-wrap gap-4">
         <ImageUploader value={thumbnailUrl} onChange={setThumbnailUrl} />
 
-        <div className="flex flex-col gap-2 flex-1 min-w-[280px]">
-          <fieldset className="fieldset bg-base-100 border-base-300 rounded-box border p-4">
-            <legend className="fieldset-legend">Topic & Tags</legend>
-            <label className="select bg-base-300">
-              <select value={topic} onChange={(e) => setTopic(e.target.value)}>
-                <option disabled={true}>Pick a Topic</option>
-                <option value="general">General</option>
-                <option value="education">Education</option>
-                <option value="business">Business</option>
-                <option value="technology">Technology</option>
-                <option value="health">Health</option>
-                <option value="sports">Sports</option>
-                <option value="entertainment">Entertainment</option>
-              </select>
-            </label>
-            <TagInput tags={tags} setTags={setTags} />
-          </fieldset>
+        <div className="flex flex-col gap-2 flex-1 min-w-[340px]">
+          <label className="select bg-base-300">
+            <select value={topic} onChange={(e) => setTopic(e.target.value)}>
+              <option disabled={true}>Pick a Topic</option>
+              <option value="general">General</option>
+              <option value="education">Education</option>
+              <option value="business">Business</option>
+              <option value="technology">Technology</option>
+              <option value="health">Health</option>
+              <option value="sports">Sports</option>
+              <option value="entertainment">Entertainment</option>
+            </select>
+          </label>
 
-          <fieldset className="fieldset bg-base-100 border-base-300 rounded-box border p-4">
-            <legend className="fieldset-legend">Invite Users</legend>
-            <label className="input bg-base-200 border-base-300 w-full">
-              <Mail className="w-5 h-5 text-primary" />
-              <input
-                type="email"
-                placeholder="johndoe@gmail.com, janesmith@yahoo.com, ..."
-                value={invitedUsers}
-                onChange={(e) => setInvitedUsers(e.target.value)}
-                required
-              />
-            </label>
-          </fieldset>
+          <TagInput tags={tags} setTags={setTags} />
+
+          <InviteUsers
+            invitedUsers={invitedUsers}
+            setInvitedUsers={setInvitedUsers}
+          />
         </div>
 
         <div className="flex flex-col gap-2">

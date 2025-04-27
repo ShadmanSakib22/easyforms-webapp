@@ -81,3 +81,11 @@ export async function fetchTags() {
 
   return tags;
 }
+
+export async function fetchEmails() {
+  const users = await prisma.user.findMany({
+    select: { email: true },
+  });
+
+  return users.map((user) => user.email);
+}
