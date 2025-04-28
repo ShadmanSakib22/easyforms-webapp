@@ -4,6 +4,70 @@ import { isLocked } from "@/app/_actions/commonActions";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 
+export async function fetchTags() {
+  const tags = await prisma.tag.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  return tags;
+}
+
+export async function fetchEmails() {
+  const users = await prisma.user.findMany({
+    select: { email: true },
+  });
+
+  return users.map((user) => user.email);
+}
+
+export async function fetchTemplatesList() {
+  return await prisma.template.findMany({
+    where: { access: "public" },
+    select: {
+      id: true,
+      title: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export async function fetchTemplateById(templateId) {
+  return await prisma.template.findUnique({
+    where: { id: templateId },
+    include: {
+      questions: {
+        include: {
+          options: true,
+        },
+      },
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
+      invitedUsers: true,
+    },
+  });
+}
+
+export async function fetchTemplateQuestionsById(templateId) {
+  return await prisma.template.findUnique({
+    where: { id: templateId, access: "public" },
+    select: {
+      questions: {
+        include: {
+          options: true,
+        },
+      },
+    },
+  });
+}
+
 export const publishTemplate = async (payload) => {
   const { userId, redirectToSignIn } = await auth();
   if (!userId) {
@@ -20,6 +84,7 @@ export const publishTemplate = async (payload) => {
     thumbnailUrl,
     tags,
     invitedUsers,
+    accessType,
     questions,
   } = payload;
 
@@ -29,6 +94,7 @@ export const publishTemplate = async (payload) => {
         title,
         description,
         topic,
+        access: accessType,
         thumbnailUrl,
         creatorId: userId,
         tags: {
@@ -71,46 +137,74 @@ export const publishTemplate = async (payload) => {
   }
 };
 
-export async function fetchTags() {
-  const tags = await prisma.tag.findMany({
-    select: {
-      id: true,
-      name: true,
-    },
-  });
+export const publishEditedTemplate = async (templateId, payload) => {
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId) {
+    return redirectToSignIn();
+  }
+  if (await isLocked(userId)) {
+    return redirect("/locked");
+  }
 
-  return tags;
-}
+  const {
+    title,
+    description,
+    topic,
+    thumbnailUrl,
+    tags,
+    invitedUsers,
+    accessType,
+    questions,
+  } = payload;
 
-export async function fetchEmails() {
-  const users = await prisma.user.findMany({
-    select: { email: true },
-  });
-
-  return users.map((user) => user.email);
-}
-
-export async function fetchTemplatesList() {
-  return await prisma.template.findMany({
-    select: {
-      id: true,
-      title: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-}
-
-export async function fetchTemplateById(templateId) {
-  return await prisma.template.findUnique({
-    where: { id: templateId },
-    include: {
-      questions: {
-        include: {
-          options: true,
+  try {
+    const updatedTemplate = await prisma.template.update({
+      where: { id: templateId },
+      data: {
+        title,
+        description,
+        topic,
+        access: accessType,
+        thumbnailUrl,
+        tags: {
+          deleteMany: {},
+          create: tags.map((tagName) => ({
+            tag: {
+              connectOrCreate: {
+                where: { name: tagName },
+                create: { name: tagName },
+              },
+            },
+          })),
+        },
+        invitedUsers: {
+          deleteMany: {},
+          create: invitedUsers.map((email) => ({
+            email,
+          })),
+        },
+        questions: {
+          deleteMany: {},
+          create: questions.map((q) => ({
+            label: q.label,
+            description: q.description,
+            type: q.type,
+            placeholder: q.placeholder,
+            required: q.required,
+            show: q.show,
+            options: {
+              create: q.options.map((opt) => ({
+                text: opt.text,
+              })),
+            },
+          })),
         },
       },
-    },
-  });
-}
+    });
+
+    return { success: true, templateId: updatedTemplate.id };
+  } catch (error) {
+    console.error("Failed to update template:", error);
+    throw new Error("Failed to update template");
+  }
+};

@@ -12,6 +12,7 @@ export default function TemplateMetadata({
   tags,
   thumbnailUrl,
   invitedUsers,
+  accessType,
   selectedMode,
   setTitle,
   setDescription,
@@ -77,7 +78,7 @@ export default function TemplateMetadata({
                 name="accessType"
                 className="radio radio-xs radio-primary"
                 value="public"
-                defaultChecked
+                checked={accessType === "public"}
                 onChange={() => setAccessType("public")}
               />
               Public
@@ -88,6 +89,7 @@ export default function TemplateMetadata({
                 name="accessType"
                 className="radio radio-xs radio-primary"
                 value="private"
+                checked={accessType === "private"}
                 onChange={() => setAccessType("private")}
               />
               Private

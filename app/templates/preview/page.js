@@ -26,11 +26,13 @@ function ViewQuestion({ question, index }) {
         </strong>
         <br />
         {/* Description with Markdown support */}
-        <div className="inline prose prose-xs max-w-none text-base-content">
+        <div
+          className="prose prose-xs max-w-none text-base-content"
+          style={{ whiteSpace: "pre-wrap" }}
+        >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-              p: React.Fragment, // Prevent wrapping in <p> if needed
               img: ({ node, ...props }) => (
                 <img
                   {...props}
@@ -39,12 +41,18 @@ function ViewQuestion({ question, index }) {
                   alt={props.alt || "markdown image"}
                 />
               ),
+              a: ({ node, ...props }) => (
+                <a {...props} className="text-primary hover:text-primary/40" />
+              ),
             }}
+            skipHtml={false}
           >
             {description}
           </ReactMarkdown>
         </div>
       </div>
+
+      <div className="block h-1"></div>
 
       {/* Render appropriate input based on type */}
       {type === "single-line" && (
@@ -98,7 +106,7 @@ function ViewQuestion({ question, index }) {
               <label key={opt.id} className="flex items-center gap-2 text-sm">
                 <input
                   type="radio"
-                  name={`radio-question-${index}`}
+                  name={`radio-question-${question.id}`}
                   className="radio radio-sm"
                 />
                 <span className="label-text text-base-content/80">
@@ -129,7 +137,7 @@ export default function PreviewTemplatePage() {
   return (
     <div className="container max-w-[1024px] mx-auto my-10 md:my-20 px-4">
       <div className="mt-10 mb-4">
-        <Link href="/templates/create" className="btn btn-sm btn-ghost">
+        <Link href="/templates/builder" className="btn btn-sm btn-ghost">
           <ArrowLeft size={16} className="mr-1" /> Back to Editor
         </Link>
       </div>
@@ -142,18 +150,26 @@ export default function PreviewTemplatePage() {
 
         {/* Render Description using Markdown */}
         {description && (
-          <div className="flex-1 prose prose-sm text-base-content/90">
+          <div
+            className="flex-1 prose prose-sm text-base-content/90"
+            style={{ whiteSpace: "pre-wrap" }}
+          >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               skipHtml={false}
               components={{
-                p: React.Fragment, // Prevent wrapping in <p> if needed
                 img: ({ node, ...props }) => (
                   <img
                     {...props}
                     style={{ maxHeight: "240px" }}
                     className="rounded-md"
                     alt={props.alt || "markdown image"}
+                  />
+                ),
+                a: ({ node, ...props }) => (
+                  <a
+                    {...props}
+                    className="text-primary hover:text-primary/40"
                   />
                 ),
               }}
@@ -241,7 +257,7 @@ export default function PreviewTemplatePage() {
       </article>
 
       <div className="mt-4 mb-4">
-        <Link href="/templates/create" className="btn btn-sm btn-ghost">
+        <Link href="/templates/builder" className="btn btn-sm btn-ghost">
           <ArrowLeft size={16} className="mr-1" /> Back to Editor
         </Link>
       </div>

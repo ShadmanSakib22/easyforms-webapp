@@ -1,16 +1,21 @@
-// app/templates/create/CreateTemplatePage.jsx
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Eye, Settings, ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Eye, Settings, ArrowLeft, Upload } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import TemplateMetadata from "@/app/_components/TemplateMetadata";
 import DraggableQuestionsList from "@/app/_components/DraggableQuestionsList";
 import { useTemplateStore } from "@/store/templateStore";
-import { publishTemplate } from "@/app/_actions/templateActions";
+import {
+  publishTemplate,
+  publishEditedTemplate,
+  fetchTemplateById,
+} from "@/app/_actions/templateActions";
 import UseExistingQuestions from "@/app/_components/UseExistingQuestions";
 
-export default function CreateTemplatePage() {
+export default function TemplateBuilder({ templateId }) {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     title,
     description,
@@ -18,6 +23,7 @@ export default function CreateTemplatePage() {
     tags,
     thumbnailUrl,
     invitedUsers,
+    accessType,
     questions,
     selectedMode,
     setTitle,
@@ -37,6 +43,50 @@ export default function CreateTemplatePage() {
     setSelectedMode,
   } = useTemplateStore();
 
+  useEffect(() => {
+    async function loadTemplate() {
+      if (templateId) {
+        setIsLoading(true);
+        const template = await fetchTemplateById(templateId);
+        if (template) {
+          setTitle(template.title);
+          setDescription(template.description);
+          setTopic(template.topic);
+          setThumbnailUrl(template.thumbnailUrl);
+          setTags(template.tags.map((tag) => tag.tag.name));
+          setInvitedUsers(template.invitedUsers.map((user) => user.email));
+
+          const mappedQuestions = template.questions.map((q) => ({
+            id: q.id,
+            label: q.label,
+            description: q.description,
+            type: q.type,
+            placeholder: q.placeholder,
+            required: q.required,
+            show: q.show,
+            options: q.options.map((opt) => ({
+              id: opt.id,
+              text: opt.text,
+            })),
+          }));
+
+          setQuestions(mappedQuestions);
+        }
+        setIsLoading(false);
+      }
+    }
+
+    loadTemplate();
+  }, [templateId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
+
   const handlePublish = async () => {
     const payload = {
       title,
@@ -45,6 +95,7 @@ export default function CreateTemplatePage() {
       thumbnailUrl,
       tags, // array of tag names
       invitedUsers, // array of emails
+      accessType,
       questions: questions.map((q) => ({
         label: q.label,
         description: q.description,
@@ -57,49 +108,72 @@ export default function CreateTemplatePage() {
         })),
       })),
     };
-    await publishTemplate(payload);
+
+    try {
+      if (templateId) {
+        await publishEditedTemplate(templateId, payload);
+        toast.success("Template updated successfully!");
+      } else {
+        await publishTemplate(payload);
+        toast.success("Template published successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to publish template. Please try again.");
+    }
   };
 
   return (
-    <div className="container mx-auto my-[5rem] px-4">
+    <div className="container mx-auto my-[3rem] px-4">
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          className: "bg-base-300! text-base-content! border! border-primary!",
+          duration: 5000,
+        }}
+      />
       <div className="mb-8">
-        <Link
-          href="/templates/create"
-          className="btn btn-sm btn-warning btn-outline"
-        >
+        <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
           <ArrowLeft size={16} className="mr-1" /> Return to Dashboard
         </Link>
       </div>
 
-      <div className="mb-8 text-center max-w-2xl mx-auto ">
-        <h1 className="text-3xl text-primary font-mono font-bold mb-4">
-          📒 Create New Template
+      <div className="mb-8 max-w-[1100px] mx-auto p-8 bg-base-200 border border-base-300 rounded-lg shadow-lg">
+        <h1 className="subheading-style">
+          <Settings />
+          Template Builder
         </h1>
 
-        <p className="text-base-content/80">
-          Effortlessly create new Forms/Surveys/Quizzes/Polls with{" "}
+        <p className="subtitle-style">
+          Effortlessly build Forms/Surveys/Quizzes/Polls with{" "}
           <span className="text-primary font-semibold">ezForms</span> Template
           Builder. <br />
           Add infinite number of questions with markdown supporting fields.
         </p>
 
-        <p className="text-sm text-base-content/80 mt-4">
+        <p className="subtitle-style">
           Check out the following resources for assistance:
+          <br />
           <a
             href="#"
             target="_blank"
-            className="font-mono block text-xs link link-hover py-1"
+            className="font-mono text-xs link link-hover py-1"
           >
             1. Video demonstration
           </a>
+          <br />
           <a
             href="#"
             target="_blank"
-            className="font-mono block text-xs link link-hover"
+            className="font-mono text-xs link link-hover"
           >
             2. Markdown support
           </a>
         </p>
+
+        <i className="text-sm">
+          Do not have more than one instance of Template Builder Open!
+        </i>
       </div>
 
       <div className="max-w-[1100px] mx-auto p-4 bg-base-200 border border-base-300 rounded-xl">
@@ -111,6 +185,7 @@ export default function CreateTemplatePage() {
             tags={tags}
             thumbnailUrl={thumbnailUrl}
             invitedUsers={invitedUsers}
+            accessType={accessType}
             selectedMode={selectedMode}
             setTitle={setTitle}
             setDescription={setDescription}
@@ -144,11 +219,11 @@ export default function CreateTemplatePage() {
           <div className="flex justify-end gap-3 mt-6">
             <Link href="/templates/preview">
               <button className="btn btn-primary">
-                <Eye className="w-4 h-4 mr-1" /> Preview
+                Preview <Eye className="w-4 h-4" />
               </button>
             </Link>
             <button className="btn btn-success" onClick={handlePublish}>
-              <Settings className="w-4 h-4 mr-1" /> Publish
+              Publish <Upload className="w-4 h-4" />
             </button>
           </div>
         </div>

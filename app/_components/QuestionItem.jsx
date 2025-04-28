@@ -1,7 +1,7 @@
 "use client";
 
 import { Trash, MessageCircleX } from "lucide-react";
-import MarkdownEditor from "./MarkdownEditor";
+//import MarkdownEditor from "./MarkdownEditor";
 
 export default function QuestionItem({
   q,
@@ -60,7 +60,7 @@ export default function QuestionItem({
         onChange={(e) => handleQuestionChange(q.id, "label", e.target.value)}
       />
 
-      {/* <textarea
+      <textarea
         className="textarea bg-base-200 border-base-300 w-full"
         placeholder="Question Description (optional) - Supports Markdown"
         rows={3}
@@ -68,12 +68,12 @@ export default function QuestionItem({
         onChange={(e) =>
           handleQuestionChange(q.id, "description", e.target.value)
         }
-      /> */}
-      <MarkdownEditor
+      />
+      {/* <MarkdownEditor
         value={q.description}
         onChange={(value) => handleQuestionChange(q.id, "description", value)}
         placeholder="Question Description (optional)"
-      />
+      /> */}
 
       {q.type === "single-line" && (
         <input

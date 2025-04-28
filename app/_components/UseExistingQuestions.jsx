@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   fetchTemplatesList,
-  fetchTemplateById,
+  fetchTemplateQuestionsById,
 } from "@/app/_actions/templateActions";
 import Select from "react-select";
 import { useTemplateStore } from "@/store/templateStore";
@@ -30,19 +30,19 @@ const UseExistingQuestions = () => {
     if (!selected) return;
     setSelectedTemplate(selected);
 
-    const templateData = await fetchTemplateById(selected.value);
+    const templateData = await fetchTemplateQuestionsById(selected.value);
     if (templateData?.questions) {
       setQuestions(
-        templateData.questions.map((q, idx) => ({
-          id: idx,
+        templateData.questions.map((q) => ({
+          id: q.id,
           label: q.label,
           description: q.description,
           type: q.type,
           placeholder: q.placeholder,
           required: q.required,
           show: q.show,
-          options: q.options.map((opt, idx) => ({
-            id: idx,
+          options: q.options.map((opt) => ({
+            id: opt.id,
             text: opt.text,
           })),
         }))
@@ -54,14 +54,13 @@ const UseExistingQuestions = () => {
     <div className="flex mt-2 justify-end w-full">
       <div className="w-[350px]" suppressHydrationWarning>
         <Select
-          placeholder="Select an existing template..."
+          placeholder="Quickstart from a public template..."
           options={templateOptions}
           value={selectedTemplate}
           onChange={handleTemplateSelect}
           classNamePrefix="react-select"
           classNames={{
-            control: () =>
-              "bg-base-100! border-primary/40! rounded-sm! text-sm!",
+            control: () => "bg-base-300! border-none! rounded-sm! text-sm!",
             valueContainer: () => "text-white! px-1!",
             input: () => "text-base-content/85!",
             singleValue: () => "text-base-content!",
@@ -73,9 +72,9 @@ const UseExistingQuestions = () => {
           }}
           noOptionsMessage={() => "No Templates found"}
         />
-        <label className="label text-center text-error text-xs font-mono">
+        <p className="text-error text-xs font-mono mt-1 text-right">
           Existing questions will be over-written!
-        </label>
+        </p>
       </div>
     </div>
   );
