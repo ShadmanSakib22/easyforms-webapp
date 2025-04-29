@@ -1,8 +1,9 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import { isLocked } from "@/app/_actions/commonActions";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { isAdmin } from "@/app/_actions/commonActions";
 
 export async function fetchTags() {
   const tags = await prisma.tag.findMany({
@@ -208,3 +209,118 @@ export const publishEditedTemplate = async (templateId, payload) => {
     throw new Error("Failed to update template");
   }
 };
+
+export async function fetchTemplateForSubmission(
+  requesterEmail,
+  requesterId,
+  templateId
+) {
+  if (!/^c[a-z0-9]{24}$/.test(templateId)) {
+    notFound();
+    // throw new Error("Invalid ID");
+  }
+
+  // Step 1: Check access
+  const template = await prisma.template.findUnique({
+    where: { id: templateId },
+    select: {
+      access: true,
+      invitedUsers: true,
+      creatorId: true,
+    },
+  });
+
+  if (!template) {
+    notFound();
+    //throw new Error("Template not found");
+  }
+
+  const isDirectlyAuthorized =
+    template.access === "public" ||
+    template.creatorId === requesterId ||
+    template.invitedUsers.some((user) => user.email === requesterEmail);
+
+  const isAuthorized = isDirectlyAuthorized || (await isAdmin(requesterId));
+
+  if (!isAuthorized) {
+    redirect("/403");
+    // throw new Error("Unauthorized");
+  }
+
+  // Step 2: Fetch full data now that access is confirmed
+  const fullTemplate = await prisma.template.findUnique({
+    where: { id: templateId },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      topic: true,
+      access: true,
+      thumbnailUrl: true,
+      updatedAt: true,
+      tags: { include: { tag: true } },
+      questions: {
+        where: { show: true },
+        include: { options: true },
+      },
+    },
+  });
+
+  return fullTemplate;
+}
+
+export async function submitTemplateResponse(
+  templateId,
+  userId,
+  answers,
+  sendCopy
+) {
+  try {
+    // Check for existing submission
+    const existingSubmission = await prisma.submission.findFirst({
+      where: {
+        templateId,
+        userId,
+      },
+    });
+
+    if (existingSubmission) {
+      return {
+        success: false,
+      };
+    }
+
+    // Create new submission if none exists
+    const submission = await prisma.submission.create({
+      data: {
+        templateId,
+        userId,
+        answers: {
+          create: Object.entries(answers).map(([questionId, value]) => ({
+            questionId,
+            value: Array.isArray(value) ? value.join(", ") : String(value),
+          })),
+        },
+      },
+      include: {
+        template: true,
+        answers: {
+          include: {
+            question: true,
+          },
+        },
+        user: true,
+      },
+    });
+
+    if (sendCopy) {
+      console.log("Sending email copy to user...");
+      // Todo: Implement email sending logic
+    }
+
+    return { success: true, submissionId: submission.id };
+  } catch (error) {
+    console.error("Failed to submit response:", error);
+    throw new Error("Failed to submit response");
+  }
+}

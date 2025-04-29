@@ -2,6 +2,7 @@
 
 import { UploadButton } from "@uploadthing/react";
 import { UploadCloud } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function ImageUploader({ value, onChange }) {
   return (
@@ -36,7 +37,7 @@ export default function ImageUploader({ value, onChange }) {
           }}
           onUploadError={(error) => {
             console.error("Upload error:", error.message);
-            alert("Upload failed: " + error.message);
+            toast.error("Upload failed: " + error.message);
           }}
           appearance={{
             button: "btn btn-sm btn-primary text-base-300! w-[100px]",

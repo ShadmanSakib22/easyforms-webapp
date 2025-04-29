@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 // Handler Function for Admin Check
-async function isAdmin(userId) {
+export async function isAdmin(userId) {
   if (!userId) return false;
   try {
     const user = await prisma.user.findUnique({
@@ -14,7 +14,7 @@ async function isAdmin(userId) {
     });
     return user?.role === "admin";
   } catch (error) {
-    console.error("Error checking admin role:", error);
+    // console.error("Error checking admin role:", error);
     return false;
   }
 }
