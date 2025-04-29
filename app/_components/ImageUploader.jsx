@@ -2,7 +2,7 @@
 
 import { UploadButton } from "@uploadthing/react";
 import { UploadCloud } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 export default function ImageUploader({ value, onChange }) {
   return (

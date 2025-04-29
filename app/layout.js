@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/app/_components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +27,15 @@ export default function RootLayout({ children }) {
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Navbar />
+          <Toaster
+            position="bottom-center"
+            reverseOrder={false}
+            toastOptions={{
+              className:
+                "bg-base-300! text-base-content! border! border-primary!",
+              duration: 5000,
+            }}
+          />
           {children}
         </body>
       </html>

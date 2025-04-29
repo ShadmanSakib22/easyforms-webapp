@@ -291,7 +291,7 @@ export async function submitTemplateResponse(
     }
 
     // Create new submission if none exists
-    const submission = await prisma.submission.create({
+    await prisma.submission.create({
       data: {
         templateId,
         userId,
@@ -318,7 +318,7 @@ export async function submitTemplateResponse(
       // Todo: Implement email sending logic
     }
 
-    return { success: true, submissionId: submission.id };
+    return { success: true };
   } catch (error) {
     console.error("Failed to submit response:", error);
     throw new Error("Failed to submit response");

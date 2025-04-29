@@ -35,7 +35,7 @@ import {
   setAdmin,
   setMember,
 } from "./actions";
-import toast, { Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 // --- Status/Role Styling Maps ---
 const statusBadgeMap = {
@@ -309,17 +309,6 @@ const UserTable = ({ initialUsers }) => {
 
   return (
     <>
-      <Toaster
-        containerStyle={{
-          position: "relative",
-        }}
-        reverseOrder={false}
-        toastOptions={{
-          className: "bg-base-300! text-base-content! border! border-primary!",
-          duration: 5000,
-        }}
-      />
-
       {/* Top Controls: Search and Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-200 rounded-lg">
         <div className="w-full md:w-auto">

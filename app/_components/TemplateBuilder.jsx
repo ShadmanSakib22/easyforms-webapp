@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Eye, Settings, ArrowLeft, Upload } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import TemplateMetadata from "@/app/_components/TemplateMetadata";
 import DraggableQuestionsList from "@/app/_components/DraggableQuestionsList";
 import { useTemplateStore } from "@/store/templateStore";
@@ -124,14 +124,6 @@ export default function TemplateBuilder({ templateId }) {
 
   return (
     <div className="container mx-auto my-[3rem] px-4">
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-        toastOptions={{
-          className: "bg-base-300! text-base-content! border! border-primary!",
-          duration: 5000,
-        }}
-      />
       <div className="mb-8">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
           <ArrowLeft size={16} className="mr-1" /> Return to Dashboard

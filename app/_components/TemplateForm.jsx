@@ -4,8 +4,8 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { CheckCircle } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
 import { submitTemplateResponse } from "@/app/_actions/templateActions";
+import toast from "react-hot-toast";
 
 const TemplateForm = ({ template, userEmail, userId }) => {
   if (!template) {
@@ -64,14 +64,6 @@ const TemplateForm = ({ template, userEmail, userId }) => {
 
   return (
     <div className="container max-w-[1024px] mx-auto my-10 md:my-20 px-4">
-      <Toaster
-        position="bottom-right"
-        reverseOrder={false}
-        toastOptions={{
-          className: "bg-base-300! text-base-content! border! border-primary!",
-          duration: 5000,
-        }}
-      />
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         {/* Render Title */}
         <h1 className="text-2xl font-mono font-bold mb-2">
