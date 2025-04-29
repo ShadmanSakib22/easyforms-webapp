@@ -8,12 +8,12 @@ export default function ImageUploader({ value, onChange }) {
   return (
     <>
       <div className="flex flex-col gap-2 w-[240px]">
-        <div className="block shadow max-h-[240px] w-auto aspect-square object-cover border border-base-300 bg-base-100 rounded">
+        <div className="block shadow h-[240px] w-auto aspect-square object-cover border border-base-300 bg-base-100 rounded">
           {value ? (
             <img
               src={value}
               alt="Thumbnail"
-              className="block shadow max-h-[240px] w-auto aspect-square object-cover border border-base-300 bg-base-100 rounded"
+              className="block shadow h-[240px] w-auto aspect-square object-cover border border-base-300 bg-base-100 rounded"
             />
           ) : null}
         </div>

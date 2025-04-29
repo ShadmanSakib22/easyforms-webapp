@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { CheckCircle } from "lucide-react";
 import { submitTemplateResponse } from "@/app/_actions/templateActions";
 import toast from "react-hot-toast";
+import { format } from "date-fns";
 
 const TemplateForm = ({ template, userEmail, userId }) => {
   if (!template) {
@@ -38,6 +39,11 @@ const TemplateForm = ({ template, userEmail, userId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!userId) {
+      toast.error("Please login to submit a response.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -59,7 +65,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
 
   // Function to format the date
   const formattedDate = updatedAt
-    ? new Date(updatedAt).toLocaleDateString()
+    ? format(new Date(updatedAt), "d MMMM yyyy - h:mm aaa")
     : "N/A";
 
   return (
@@ -113,7 +119,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
               <img
                 src={thumbnailUrl}
                 alt="Thumbnail"
-                className="block shadow max-h-[240px] w-auto aspect-square object-cover bg-base-300 rounded"
+                className="block shadow h-[240px] w-auto aspect-square object-cover bg-base-300 rounded"
               />
             </div>
           )}
@@ -218,7 +224,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                         handleAnswerChange(question.id, e.target.value)
                       }
                       placeholder={question.placeholder || "Answer here..."}
-                      className="input bg-base-300 w-full mt-1 text-sm"
+                      className="input bg-base-300 border-none w-full mt-1 text-sm"
                       required={question.required} // HTML required attribute
                     />
                   )}
@@ -230,7 +236,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                         handleAnswerChange(question.id, e.target.value)
                       }
                       placeholder={question.placeholder || "Answer here..."}
-                      className="textarea bg-base-300 w-full mt-1 text-sm h-24"
+                      className="textarea bg-base-300 border-none w-full mt-1 text-sm h-24"
                       required={question.required}
                     />
                   )}

@@ -44,6 +44,19 @@ export async function isLocked(optionalUserId) {
   }
 }
 
+export async function getEmailFromUserId(userId) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      select: { email: true },
+    });
+    return user?.email;
+  } catch (error) {
+    console.error("Error fetching email:", error);
+    return null;
+  }
+}
+
 export const lockedRedirect = async () => {
   if (await isLocked()) {
     redirect("/locked");

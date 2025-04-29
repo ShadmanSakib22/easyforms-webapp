@@ -191,7 +191,7 @@ export default function PreviewTemplatePage() {
               <img
                 src={thumbnailUrl}
                 alt="Thumbnail"
-                className="block shadow max-h-[240px] w-auto aspect-square object-cover bg-base-300 rounded"
+                className="block shadow h-[240px] w-auto aspect-square object-cover bg-base-300 rounded"
               />
             </div>
           )}

@@ -1,9 +1,41 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
-import { isLocked } from "@/app/_actions/commonActions";
+import { isLocked, isAdmin } from "@/app/_actions/commonActions";
 import { redirect, notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { isAdmin } from "@/app/_actions/commonActions";
+
+export async function isCreator(templateId, reqId) {
+  const template = await prisma.template.findFirst({
+    where: {
+      id: templateId,
+      creatorId: reqId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return template !== null;
+}
+
+export async function hasFullTemplateAccess(templateId, reqId) {
+  try {
+    if (!templateId || !reqId) return false;
+
+    if (await isLocked(reqId)) {
+      redirect("/locked");
+    }
+
+    if ((await isCreator(templateId, reqId)) || (await isAdmin(reqId))) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error checking template access:", error);
+    return false;
+  }
+}
 
 export async function fetchTags() {
   const tags = await prisma.tag.findMany({
@@ -69,7 +101,7 @@ export async function fetchTemplateQuestionsById(templateId) {
   });
 }
 
-export const publishTemplate = async (payload) => {
+export async function publishTemplate(payload) {
   const { userId, redirectToSignIn } = await auth();
   if (!userId) {
     return redirectToSignIn();
@@ -136,9 +168,9 @@ export const publishTemplate = async (payload) => {
     console.error("Failed to publish template:", error);
     throw new Error("Failed to publish template");
   }
-};
+}
 
-export const publishEditedTemplate = async (templateId, payload) => {
+export async function publishEditedTemplate(templateId, payload) {
   const { userId, redirectToSignIn } = await auth();
   if (!userId) {
     return redirectToSignIn();
@@ -208,7 +240,7 @@ export const publishEditedTemplate = async (templateId, payload) => {
     console.error("Failed to update template:", error);
     throw new Error("Failed to update template");
   }
-};
+}
 
 export async function fetchTemplateForSubmission(
   requesterEmail,
@@ -323,4 +355,59 @@ export async function submitTemplateResponse(
     console.error("Failed to submit response:", error);
     throw new Error("Failed to submit response");
   }
+}
+
+export async function fetchUserSubmission(templateId, userId) {
+  const submission = await prisma.submission.findFirst({
+    where: {
+      templateId,
+      userId,
+    },
+    select: {
+      updatedAt: true,
+      template: {
+        select: {
+          title: true,
+          questions: {
+            where: { show: true },
+            select: {
+              id: true,
+              label: true,
+              description: true,
+              type: true,
+              options: true,
+            },
+          },
+        },
+      },
+      answers: {
+        select: {
+          questionId: true,
+          value: true,
+        },
+      },
+    },
+  });
+
+  if (submission) {
+    const questionsWithAnswers = submission.template.questions.map(
+      (question) => {
+        const answer = submission.answers.find(
+          (a) => a.questionId === question.id
+        );
+        return {
+          ...question,
+          answer: answer ? answer.value : null,
+        };
+      }
+    );
+
+    return {
+      updatedAt: submission.updatedAt,
+      title: submission.template.title,
+      questions: questionsWithAnswers,
+    };
+  }
+
+  return null;
 }
