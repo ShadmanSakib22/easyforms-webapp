@@ -435,3 +435,55 @@ export async function fetchUserSubmission(templateId, userId) {
 
   return null;
 }
+
+export async function fetchSubmissionsList() {
+  try {
+    const submissions = await prisma.submission.findMany({
+      select: {
+        userId: true,
+        updatedAt: true,
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
+    return submissions;
+  } catch (error) {
+    console.error("Error fetching submissions with email:", error);
+    return null;
+  }
+}
+
+export async function deleteSubmissions(userIds) {
+  if (!Array.isArray(userIds) || userIds.length === 0) {
+    return { success: false, error: "No IDs provided for deletion." };
+  }
+
+  try {
+    const deleteResult = await prisma.submission.deleteMany({
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    });
+
+    // Check if any submissions were deleted
+    if (deleteResult.count > 0) {
+      return { success: true, message: `Successfully deleted submission(s).` };
+    } else {
+      return {
+        success: true,
+        message: "No matching submissions found to delete.",
+      };
+    }
+  } catch (error) {
+    console.error("Error deleting submissions:", error);
+    return {
+      success: false,
+      error: `Failed to delete submissions: ${error.message}`,
+    };
+  }
+}

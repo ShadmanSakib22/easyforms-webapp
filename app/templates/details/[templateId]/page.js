@@ -2,10 +2,12 @@ import { notFound } from "next/navigation";
 import {
   hasFullTemplateAccess,
   fetchTemplateMetadataById,
+  fetchSubmissionsList,
 } from "@/app/_actions/templateActions";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import TemplateDetails from "@/app/_components/TemplateDetails";
+import SubmissionTable from "@/app/_components/SubmissionTable";
 
 const page = async ({ params }) => {
   const { templateId } = await params;
@@ -23,9 +25,16 @@ const page = async ({ params }) => {
     notFound();
   }
 
+  const submissionList = await fetchSubmissionsList();
+  // console.log(submissionList);
+
   return (
     <div>
       <TemplateDetails template={template} />
+      <SubmissionTable
+        submissionList={submissionList}
+        templateId={templateId}
+      />
     </div>
   );
 };
