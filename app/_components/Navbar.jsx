@@ -336,7 +336,7 @@ const Navbar = () => {
                 <div
                   tabIndex={0}
                   role="button"
-                  className="btn btn-outline btn-block"
+                  className="btn btn-outline btn-primary btn-block"
                 >
                   <Globe className="h-4 w-4 mr-2" />
                   {language === "en" ? "English" : "Español"}
@@ -373,7 +373,7 @@ const Navbar = () => {
                 <div
                   tabIndex={0}
                   role="button"
-                  className="btn btn-outline btn-block"
+                  className="btn btn-outline btn-primary btn-block"
                 >
                   Theme
                 </div>
