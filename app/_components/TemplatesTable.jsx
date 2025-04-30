@@ -13,8 +13,16 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import { Search, Ban, Eye, ChevronDown, ChevronUp } from "lucide-react";
-import { deleteSubmissions } from "../_actions/templateActions";
+import {
+  Search,
+  Ban,
+  Eye,
+  Cog,
+  ScrollText,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { deleteTemplates } from "../_actions/templateActions";
 
 // --- TanStack Table Column Definition ---
 const columnHelper = createColumnHelper();
@@ -58,20 +66,38 @@ const columns = [
     enableColumnFilter: false,
   }),
   // Data Columns
-  columnHelper.accessor("userId", {
-    header: "User ID",
+  columnHelper.accessor("id", {
+    header: "Template ID",
     cell: (info) => (
       <span className="font-mono text-xs">{info.getValue()}</span>
     ),
     enableSorting: false,
   }),
-  columnHelper.accessor("user.email", {
-    header: "Email",
+  columnHelper.accessor("title", {
+    header: "Title",
     cell: (info) => <span className="text-sm">{info.getValue()}</span>,
     enableSorting: true,
   }),
+  columnHelper.accessor("topic", {
+    header: "Topic",
+    cell: (info) => (
+      <span className="text-sm capitalize badge badge-sm border-primary">
+        {info.getValue()}
+      </span>
+    ),
+    enableSorting: true,
+  }),
+  columnHelper.accessor("access", {
+    header: "Access",
+    cell: (info) => (
+      <span className="text-sm capitalize badge badge-sm border-secondary">
+        {info.getValue()}
+      </span>
+    ),
+    enableSorting: true,
+  }),
   columnHelper.accessor("updatedAt", {
-    header: "Submitted At",
+    header: "Last Publish",
     cell: (info) => (
       <span className="text-sm">
         {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
@@ -79,13 +105,18 @@ const columns = [
     ),
     enableSorting: true,
   }),
+  columnHelper.accessor("_count.submissions", {
+    header: "Submissions",
+    cell: (info) => <span className="text-sm">{info.getValue()}</span>,
+    enableSorting: true,
+  }),
 ];
 
-const SubmissionTable = ({ submissionList, templateId }) => {
-  const [data, setData] = useState(submissionList);
+const TemplatesTable = ({ templatesList }) => {
+  const [data, setData] = useState(templatesList);
   const [sorting, setSorting] = useState([{ id: "updatedAt", desc: true }]); // Initial sort state
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
-  const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'userId1': true, 'userId2': true }
+  const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'id1': true, 'id2': true }
   const [isPending, startTransition] = useTransition(); // Toolbar Button States
   const router = useRouter();
 
@@ -113,12 +144,12 @@ const SubmissionTable = ({ submissionList, templateId }) => {
     getPaginationRowModel: getPaginationRowModel(),
     // Row Selection Logic
     enableRowSelection: true,
-    getRowId: (row) => row.userId, // Use 'userId' as the unique ID for selection state
+    getRowId: (row) => row.id, // Use 'id' as the unique ID for selection state
   });
 
   // --- Action Handlers ---
-  const getSelectedUserIds = useCallback(() => {
-    return Object.keys(rowSelection); // Get the keys (userIds) from the selection state
+  const getSelectedIds = useCallback(() => {
+    return Object.keys(rowSelection); // Get the keys (ids) from the selection state
   }, [rowSelection]);
 
   const executeAction = useCallback((actionFn, ids, messages) => {
@@ -149,18 +180,30 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   }, []);
 
   const handleView = useCallback(() => {
-    const userId = getSelectedUserIds();
-    if (userId.length != 1) return;
-    router.push(`/templates/details/${templateId}/${userId}`);
-  }, [getSelectedUserIds, templateId]);
+    const id = getSelectedIds();
+    if (id.length != 1) return;
+    router.push(`/templates/${id}`);
+  }, [getSelectedIds]);
 
-  const handleDeleteSubmisson = useCallback(() => {
-    const idsToDelete = getSelectedUserIds();
+  const handleViewDetails = useCallback(() => {
+    const id = getSelectedIds();
+    if (id.length != 1) return;
+    router.push(`/templates/details/${id}`);
+  }, [getSelectedIds]);
+
+  const handleEdit = useCallback(() => {
+    const id = getSelectedIds();
+    if (id.length != 1) return;
+    router.push(`/templates/edit/${id}`);
+  }, [getSelectedIds]);
+
+  const handleDeleteTemplate = useCallback(() => {
+    const idsToDelete = getSelectedIds();
     if (idsToDelete.length === 0) return;
-    executeAction(deleteSubmissions, idsToDelete, {
-      loading: "Deleting Submission(s)...",
+    executeAction(deleteTemplates, idsToDelete, {
+      loading: "Deleting Template(s)...",
     });
-  }, [getSelectedUserIds, executeAction]);
+  }, [getSelectedIds, executeAction]);
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
@@ -169,9 +212,9 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   const currentRowsPerPage = table.getState().pagination.pageSize;
 
   return (
-    <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md">
+    <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
       <h1 className="badge badge-accent badge-outline font-mono mb-4 ">
-        Submissions
+        Your Templates
       </h1>
       {/* Top Controls: Search and Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-100 border border-base-300 rounded-lg">
@@ -203,10 +246,38 @@ const SubmissionTable = ({ submissionList, templateId }) => {
             View
           </button>
           <button
+            className={`btn btn-success btn-sm min-w-[110px] ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleViewDetails}
+            disabled={selectedRowCount !== 1 || isPending}
+          >
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <ScrollText className="w-4 h-4" />
+            )}
+            Details
+          </button>
+          <button
+            className={`btn btn-warning btn-sm min-w-[110px] ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleEdit}
+            disabled={selectedRowCount !== 1 || isPending}
+          >
+            {isPending ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <Cog className="w-4 h-4" />
+            )}
+            Edit
+          </button>
+          <button
             className={`btn btn-error btn-sm min-w-[110px] ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            onClick={handleDeleteSubmisson}
+            onClick={handleDeleteTemplate}
             disabled={selectedRowCount === 0 || isPending}
           >
             {isPending ? (
@@ -318,7 +389,7 @@ const SubmissionTable = ({ submissionList, templateId }) => {
         <div className="text-center flex flex-wrap items-center gap-4">
           <span className="text-sm text-base-content/70">
             Page {currentPage} of {pageCount} (
-            {table.getFilteredRowModel().rows.length} total submissions
+            {table.getFilteredRowModel().rows.length} total templates
             {globalFilter ? " matching filter" : ""})
           </span>
           <div className="join">
@@ -352,4 +423,4 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   );
 };
 
-export default SubmissionTable;
+export default TemplatesTable;

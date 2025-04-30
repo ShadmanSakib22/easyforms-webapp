@@ -25,7 +25,7 @@ const page = async ({ params }) => {
     notFound();
   }
 
-  const submissionList = await fetchSubmissionsList();
+  const submissionList = await fetchSubmissionsList(templateId);
   // console.log(submissionList);
 
   return (

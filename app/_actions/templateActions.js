@@ -69,6 +69,36 @@ export async function fetchTemplatesList() {
   });
 }
 
+export async function fetchCreatorsTemplateList(userId) {
+  try {
+    const templates = await prisma.template.findMany({
+      where: { creatorId: userId },
+      select: {
+        id: true,
+        title: true,
+        topic: true,
+        access: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            submissions: true, // Select the count of submissions relation
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return templates;
+  } catch (error) {
+    console.error(
+      "Error fetching templates list with submission count:",
+      error
+    );
+    return null;
+  }
+}
+
 export async function fetchTemplateMetadataById(templateId) {
   return await prisma.template.findUnique({
     where: { id: templateId },
@@ -436,9 +466,12 @@ export async function fetchUserSubmission(templateId, userId) {
   return null;
 }
 
-export async function fetchSubmissionsList() {
+export async function fetchSubmissionsList(templateId) {
   try {
     const submissions = await prisma.submission.findMany({
+      where: {
+        templateId,
+      },
       select: {
         userId: true,
         updatedAt: true,
@@ -484,6 +517,100 @@ export async function deleteSubmissions(userIds) {
     return {
       success: false,
       error: `Failed to delete submissions: ${error.message}`,
+    };
+  }
+}
+
+export async function deleteTemplates(templateIds) {
+  if (!Array.isArray(templateIds) || templateIds.length === 0) {
+    return { success: false, error: "No IDs provided for deletion." };
+  }
+
+  try {
+    const deleteResult = await prisma.template.deleteMany({
+      where: {
+        id: {
+          in: templateIds,
+        },
+      },
+    });
+
+    // Check if any templates were deleted
+    if (deleteResult.count > 0) {
+      return { success: true, message: `Successfully deleted template(s).` };
+    } else {
+      return {
+        success: true,
+        message: "No matching template to delete.",
+      };
+    }
+  } catch (error) {
+    console.error("Error deleting template(s):", error);
+    return {
+      success: false,
+      error: `Failed to delete template(s): ${error.message}`,
+    };
+  }
+}
+
+export async function fetchInvitesForUser(userEmail) {
+  try {
+    const invites = await prisma.invitedUser.findMany({
+      where: {
+        email: userEmail,
+      },
+      select: {
+        id: true, // InviteId
+        template: {
+          select: {
+            id: true, // TemplateId
+            title: true,
+            topic: true,
+            access: true,
+            updatedAt: true,
+            creator: {
+              select: {
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return invites;
+  } catch (error) {
+    console.error("Error fetching user invites:", error);
+    return null;
+  }
+}
+
+export async function deleteInvites(inviteIds) {
+  if (!Array.isArray(inviteIds) || inviteIds.length === 0) {
+    return { success: false, error: "No IDs provided for deletion." };
+  }
+
+  try {
+    const deleteResult = await prisma.invitedUser.deleteMany({
+      where: {
+        id: {
+          in: inviteIds,
+        },
+      },
+    });
+    if (deleteResult.count > 0) {
+      return { success: true, message: "Successfully deleted invite(s)." };
+    } else {
+      return {
+        success: true,
+        message: "No matching invites found to delete.",
+      };
+    }
+  } catch (error) {
+    console.error("Error deleting invites:", error);
+    return {
+      success: false,
+      error: `Failed to delete invites: ${error.message}`,
     };
   }
 }

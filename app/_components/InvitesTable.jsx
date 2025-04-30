@@ -14,7 +14,7 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import { Search, Ban, Eye, ChevronDown, ChevronUp } from "lucide-react";
-import { deleteSubmissions } from "../_actions/templateActions";
+import { deleteInvites } from "../_actions/templateActions";
 
 // --- TanStack Table Column Definition ---
 const columnHelper = createColumnHelper();
@@ -58,20 +58,45 @@ const columns = [
     enableColumnFilter: false,
   }),
   // Data Columns
-  columnHelper.accessor("userId", {
-    header: "User ID",
+  //   columnHelper.accessor("id", {
+  //     header: "Invite ID",
+  //     cell: (info) => (
+  //       <span className="font-mono text-xs">{info.getValue()}</span>
+  //     ),
+  //     enableSorting: false,
+  //   }),
+  columnHelper.accessor("template.id", {
+    header: "Template ID",
     cell: (info) => (
       <span className="font-mono text-xs">{info.getValue()}</span>
     ),
     enableSorting: false,
   }),
-  columnHelper.accessor("user.email", {
-    header: "Email",
+  columnHelper.accessor("template.title", {
+    header: "Title",
     cell: (info) => <span className="text-sm">{info.getValue()}</span>,
     enableSorting: true,
   }),
-  columnHelper.accessor("updatedAt", {
-    header: "Submitted At",
+  columnHelper.accessor("template.topic", {
+    header: "Topic",
+    cell: (info) => (
+      <span className="text-sm capitalize badge badge-sm border-primary">
+        {info.getValue()}
+      </span>
+    ),
+    enableSorting: true,
+  }),
+  columnHelper.accessor("template.access", {
+    header: "Access",
+    cell: (info) => (
+      <span className="text-sm capitalize badge badge-sm border-secondary">
+        {info.getValue()}
+      </span>
+    ),
+    enableSorting: true,
+  }),
+  columnHelper.accessor("template.updatedAt", {
+    header: "Invite Date",
     cell: (info) => (
       <span className="text-sm">
         {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
@@ -79,18 +104,24 @@ const columns = [
     ),
     enableSorting: true,
   }),
+  columnHelper.accessor("template.creator.email", {
+    header: "Template Author",
+    cell: (info) => <span className="text-sm">{info.getValue()}</span>,
+    enableSorting: true,
+  }),
 ];
 
-const SubmissionTable = ({ submissionList, templateId }) => {
-  const [data, setData] = useState(submissionList);
-  const [sorting, setSorting] = useState([{ id: "updatedAt", desc: true }]); // Initial sort state
+const InvitesTable = ({ invitesList }) => {
+  const [data, setData] = useState(invitesList);
+  const [sorting, setSorting] = useState([]); // Initial sort state
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
-  const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'userId1': true, 'userId2': true }
+  const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'id1': true, 'id2': true }
   const [isPending, startTransition] = useTransition(); // Toolbar Button States
   const router = useRouter();
 
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
+  console.log("InvitesTable.jsx: memoizedData", memoizedData);
 
   const table = useReactTable({
     data: memoizedData,
@@ -113,12 +144,12 @@ const SubmissionTable = ({ submissionList, templateId }) => {
     getPaginationRowModel: getPaginationRowModel(),
     // Row Selection Logic
     enableRowSelection: true,
-    getRowId: (row) => row.userId, // Use 'userId' as the unique ID for selection state
+    getRowId: (row) => row.id, // Use invite 'id' for selection state
   });
 
   // --- Action Handlers ---
-  const getSelectedUserIds = useCallback(() => {
-    return Object.keys(rowSelection); // Get the keys (userIds) from the selection state
+  const getSelectedIds = useCallback(() => {
+    return Object.keys(rowSelection); // Get the keys (ids) from the selection state
   }, [rowSelection]);
 
   const executeAction = useCallback((actionFn, ids, messages) => {
@@ -149,18 +180,27 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   }, []);
 
   const handleView = useCallback(() => {
-    const userId = getSelectedUserIds();
-    if (userId.length != 1) return;
-    router.push(`/templates/details/${templateId}/${userId}`);
-  }, [getSelectedUserIds, templateId]);
+    const selectedIds = getSelectedIds();
+    if (selectedIds.length !== 1) return;
 
-  const handleDeleteSubmisson = useCallback(() => {
-    const idsToDelete = getSelectedUserIds();
+    // Find the selected invite in the data array
+    const selectedId = selectedIds[0];
+    const selectedInvite = memoizedData.find(
+      (invite) => invite.id === selectedId
+    );
+
+    if (selectedInvite && selectedInvite.template) {
+      router.push(`/templates/${selectedInvite.template.id}`);
+    }
+  }, [getSelectedIds, memoizedData]);
+
+  const handleDeleteInvite = useCallback(() => {
+    const idsToDelete = getSelectedIds();
     if (idsToDelete.length === 0) return;
-    executeAction(deleteSubmissions, idsToDelete, {
-      loading: "Deleting Submission(s)...",
+    executeAction(deleteInvites, idsToDelete, {
+      loading: "Deleting Invite(s)...",
     });
-  }, [getSelectedUserIds, executeAction]);
+  }, [getSelectedIds, executeAction]);
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
@@ -169,9 +209,9 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   const currentRowsPerPage = table.getState().pagination.pageSize;
 
   return (
-    <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md">
+    <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
       <h1 className="badge badge-accent badge-outline font-mono mb-4 ">
-        Submissions
+        Your Invites
       </h1>
       {/* Top Controls: Search and Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-100 border border-base-300 rounded-lg">
@@ -206,7 +246,7 @@ const SubmissionTable = ({ submissionList, templateId }) => {
             className={`btn btn-error btn-sm min-w-[110px] ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            onClick={handleDeleteSubmisson}
+            onClick={handleDeleteInvite}
             disabled={selectedRowCount === 0 || isPending}
           >
             {isPending ? (
@@ -318,7 +358,7 @@ const SubmissionTable = ({ submissionList, templateId }) => {
         <div className="text-center flex flex-wrap items-center gap-4">
           <span className="text-sm text-base-content/70">
             Page {currentPage} of {pageCount} (
-            {table.getFilteredRowModel().rows.length} total submissions
+            {table.getFilteredRowModel().rows.length} total invites
             {globalFilter ? " matching filter" : ""})
           </span>
           <div className="join">
@@ -352,4 +392,4 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   );
 };
 
-export default SubmissionTable;
+export default InvitesTable;
