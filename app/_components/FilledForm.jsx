@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowLeft, ListCheck } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { format } from "date-fns";
 
-const FilledForm = ({ submission, submittedBy }) => {
+const FilledForm = ({ submission, submittedBy, templateId }) => {
   if (!submission) {
     return <div className="text-center text-error">No submission found.</div>;
   }
@@ -16,8 +18,22 @@ const FilledForm = ({ submission, submittedBy }) => {
     : "N/A";
 
   return (
-    <div className="container max-w-[1024px] mx-auto my-10 md:my-20 px-4">
+    <div className="container max-w-[1100px] mx-auto my-[3rem] px-4">
+      <div className="mb-4 md:mb-8">
+        <Link
+          href={`/templates/details/${templateId}`}
+          className="btn btn-sm btn-primary btn-outline"
+        >
+          <ArrowLeft size={16} className="mr-1" /> Return to Details
+        </Link>
+      </div>
+
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
+        <h1 className="subheading-style">
+          {" "}
+          <ListCheck /> Form Response
+        </h1>
+
         <h1 className="text-2xl font-mono font-bold mb-2">
           {title || "*Untitled Form*"}
         </h1>

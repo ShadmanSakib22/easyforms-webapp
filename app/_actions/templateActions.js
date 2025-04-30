@@ -69,6 +69,30 @@ export async function fetchTemplatesList() {
   });
 }
 
+export async function fetchTemplateMetadataById(templateId) {
+  return await prisma.template.findUnique({
+    where: { id: templateId },
+    include: {
+      creator: {
+        select: {
+          email: true,
+        },
+      },
+      tags: {
+        include: {
+          tag: true,
+        },
+      },
+      invitedUsers: true,
+      _count: {
+        select: {
+          submissions: true,
+        },
+      },
+    },
+  });
+}
+
 export async function fetchTemplateById(templateId) {
   return await prisma.template.findUnique({
     where: { id: templateId },

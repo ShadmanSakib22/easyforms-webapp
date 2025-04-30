@@ -123,14 +123,14 @@ export default function TemplateBuilder({ templateId }) {
   };
 
   return (
-    <div className="container mx-auto my-[3rem] px-4">
-      <div className="mb-8">
+    <div className="container mx-auto my-[3rem] px-4 max-w-[1100px]">
+      <div className="mb-4 md:mb-8">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
           <ArrowLeft size={16} className="mr-1" /> Return to Dashboard
         </Link>
       </div>
 
-      <div className="mb-8 max-w-[1100px] mx-auto p-8 bg-base-200 border border-base-300 rounded-lg shadow-lg">
+      <div className="mb-8 p-8 bg-base-200 border border-base-300 rounded-lg shadow-lg">
         <h1 className="subheading-style">
           <Settings />
           Template Builder
