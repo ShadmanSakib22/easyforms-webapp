@@ -28,7 +28,7 @@ const page = async () => {
   // console.log(invitesList);
 
   return (
-    <div className="container max-w-[1080px] mx-auto my-[3rem]">
+    <div className="container max-w-[1100px] mx-auto my-[3rem] px-4">
       <div className="mb-6 flex flex-wrap justify-between rounded-md p-2 bg-base-200 border-1 border-base-300">
         <ul className="flex gap-2">
           <li className="btn btn-sm w-[6rem] btn-primary">Dashboard</li>
