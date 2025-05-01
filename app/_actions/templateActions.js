@@ -614,3 +614,29 @@ export async function deleteInvites(inviteIds) {
     };
   }
 }
+
+export async function fetchAdminsTemplateList() {
+  try {
+    const templates = await prisma.template.findMany({
+      select: {
+        id: true,
+        title: true,
+        topic: true,
+        access: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            submissions: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return templates;
+  } catch (error) {
+    console.error("Error fetching templates list:", error);
+    return null;
+  }
+}

@@ -211,7 +211,7 @@ const InvitesTable = ({ invitesList }) => {
   return (
     <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
       <h1 className="badge badge-accent badge-outline font-mono mb-4 ">
-        Your Invites
+        Invites
       </h1>
       {/* Top Controls: Search and Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-100 border border-base-300 rounded-lg">
@@ -376,7 +376,7 @@ const InvitesTable = ({ invitesList }) => {
               onChange={(e) =>
                 table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
               }
-              className="join-item btn btn-sm w-[100px] bg-base-300"
+              className="join-item input input-sm w-[80px] text-center"
             />
             <button
               className="join-item btn btn-sm"

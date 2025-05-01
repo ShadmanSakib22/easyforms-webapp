@@ -336,7 +336,7 @@ const SubmissionTable = ({ submissionList, templateId }) => {
               onChange={(e) =>
                 table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
               }
-              className="join-item btn btn-sm w-[100px] bg-base-300"
+              className="join-item input input-sm w-[80px] text-center"
             />
             <button
               className="join-item btn btn-sm"

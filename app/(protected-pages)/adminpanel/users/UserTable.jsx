@@ -309,220 +309,226 @@ const UserTable = ({ initialUsers }) => {
 
   return (
     <>
-      {/* Top Controls: Search and Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-200 rounded-lg">
-        <div className="w-full md:w-auto">
-          <label className="input input-bordered input-sm flex items-center gap-2 w-full md:w-80">
-            <input
-              type="text"
-              className="grow"
-              placeholder="Search all columns..."
-              value={globalFilter ?? ""}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-            />
-            <Search className="h-4 w-4" />
-          </label>
+      <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
+        <h1 className="badge badge-accent badge-outline font-mono mb-4 ">
+          Users List
+        </h1>
+        {/* Top Controls: Search and Actions */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-100 border border-base-300 rounded-lg">
+          <div className="w-full md:w-auto">
+            <label className="input input-bordered input-sm flex items-center gap-2 w-full md:w-80">
+              <input
+                type="text"
+                className="grow"
+                placeholder="Search all columns..."
+                value={globalFilter ?? ""}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+              />
+              <Search className="h-4 w-4" />
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              className={`btn btn-secondary btn-sm ${
+                isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleSetAdmin}
+              disabled={selectedRowCount === 0 || isPending}
+            >
+              {isPending ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <Shield className="w-4 h-4" />
+              )}
+              Promote ({selectedRowCount})
+            </button>
+            <button
+              className={`btn btn-warning btn-sm ${
+                isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleSetMember}
+              disabled={selectedRowCount === 0 || isPending}
+            >
+              {isPending ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <ShieldOff className="w-4 h-4" />
+              )}
+              Demote ({selectedRowCount})
+            </button>
+            <button
+              className={`btn btn-success btn-sm ${
+                isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleUnlock}
+              disabled={selectedRowCount === 0 || isPending}
+            >
+              {isPending ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <LockKeyholeOpen className="w-4 h-4" />
+              )}
+              Unlock ({selectedRowCount})
+            </button>
+            <button
+              className={`btn btn-warning btn-sm ${
+                isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleLock}
+              disabled={selectedRowCount === 0 || isPending}
+            >
+              {isPending ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <LockKeyholeIcon className="w-4 h-4" />
+              )}
+              Lock ({selectedRowCount})
+            </button>
+            <button
+              className={`btn btn-error btn-sm ${
+                isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleDelete}
+              disabled={selectedRowCount === 0 || isPending}
+            >
+              {isPending ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <Ban className="w-4 h-4" />
+              )}
+              Delete ({selectedRowCount})
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            className={`btn btn-secondary btn-sm ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleSetAdmin}
-            disabled={selectedRowCount === 0 || isPending}
-          >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <Shield className="w-4 h-4" />
-            )}
-            Promote ({selectedRowCount})
-          </button>
-          <button
-            className={`btn btn-warning btn-sm ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleSetMember}
-            disabled={selectedRowCount === 0 || isPending}
-          >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <ShieldOff className="w-4 h-4" />
-            )}
-            Demote ({selectedRowCount})
-          </button>
-          <button
-            className={`btn btn-success btn-sm ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleUnlock}
-            disabled={selectedRowCount === 0 || isPending}
-          >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <LockKeyholeOpen className="w-4 h-4" />
-            )}
-            Unlock ({selectedRowCount})
-          </button>
-          <button
-            className={`btn btn-warning btn-sm ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleLock}
-            disabled={selectedRowCount === 0 || isPending}
-          >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <LockKeyholeIcon className="w-4 h-4" />
-            )}
-            Lock ({selectedRowCount})
-          </button>
-          <button
-            className={`btn btn-error btn-sm ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleDelete}
-            disabled={selectedRowCount === 0 || isPending}
-          >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <Ban className="w-4 h-4" />
-            )}
-            Delete ({selectedRowCount})
-          </button>
-        </div>
-      </div>
 
-      {/* Table Container */}
-      <div className="overflow-x-auto border border-base-300 rounded-lg">
-        <table className="table table-pin-rows w-full">
-          {/* Head */}
-          <thead className="bg-base-200">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <div
-                        {...{
-                          className: header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-1"
-                            : "flex items-center gap-1",
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        {/* Render Sort Icons */}
-                        {{
-                          asc: <ChevronUp className="w-4 h-4" />,
-                          desc: <ChevronDown className="w-4 h-4" />,
-                        }[header.column.getIsSorted()] ?? null}
-                      </div>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-
-          {/* Body */}
-          <tbody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className={`hover:bg-primary/10 ${
-                    row.getIsSelected() ? "bg-primary/20" : ""
-                  }`}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+        {/* Table Container */}
+        <div className="overflow-x-auto border border-base-300 rounded-lg">
+          <table className="table table-pin-rows w-full">
+            {/* Head */}
+            <thead className="bg-base-200">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder ? null : (
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "cursor-pointer select-none flex items-center gap-1"
+                              : "flex items-center gap-1",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {/* Render Sort Icons */}
+                          {{
+                            asc: <ChevronUp className="w-4 h-4" />,
+                            desc: <ChevronDown className="w-4 h-4" />,
+                          }[header.column.getIsSorted()] ?? null}
+                        </div>
                       )}
-                    </td>
+                    </th>
                   ))}
                 </tr>
-              ))
-            ) : (
-              <tr>
-                {/* Use column count from header */}
-                <td
-                  colSpan={
-                    table.getHeaderGroups()[0]?.headers.length || columns.length
-                  }
-                  className="text-center p-4"
-                >
-                  No users found
-                  {globalFilter ? ` matching "${globalFilter}"` : ""}.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Bottom Controls: Pagination and Rows Per Page */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 py-2">
-        {/* Rows Per Page Selector */}
-        <div className="text-sm text-base-content/70">
-          <label className="flex items-center gap-2 text-nowrap">
-            Rows per page:
-            <select
-              className="select select-bordered select-xs"
-              value={currentRowsPerPage}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-            >
-              {[5, 10, 15, 20, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
               ))}
-            </select>
-          </label>
+            </thead>
+
+            {/* Body */}
+            <tbody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className={`hover:bg-primary/10 ${
+                      row.getIsSelected() ? "bg-primary/20" : ""
+                    }`}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  {/* Use column count from header */}
+                  <td
+                    colSpan={
+                      table.getHeaderGroups()[0]?.headers.length ||
+                      columns.length
+                    }
+                    className="text-center p-4"
+                  >
+                    No Data found
+                    {globalFilter ? ` matching "${globalFilter}"` : ""}.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* Pagination Info and Controls */}
-        <div className="text-center flex flex-wrap items-center gap-4">
-          <span className="text-sm text-base-content/70">
-            Page {currentPage} of {pageCount} (
-            {table.getFilteredRowModel().rows.length} total users
-            {globalFilter ? " matching filter" : ""})
-          </span>
-          <div className="join">
-            <button
-              className="join-item btn btn-sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              «
-            </button>
-            {/* Page number input */}
-            <input
-              type="number"
-              value={currentPage}
-              onChange={(e) =>
-                table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
-              }
-              className="join-item btn btn-sm w-14 text-center"
-            />
-            <button
-              className="join-item btn btn-sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              »
-            </button>
+        {/* Bottom Controls: Pagination and Rows Per Page */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 py-2">
+          {/* Rows Per Page Selector */}
+          <div className="text-sm text-base-content/70">
+            <label className="flex items-center gap-2 text-nowrap">
+              Rows per page:
+              <select
+                className="select select-bordered select-xs"
+                value={currentRowsPerPage}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+              >
+                {[5, 10, 15, 20, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    {pageSize}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {/* Pagination Info and Controls */}
+          <div className="text-center flex flex-wrap items-center gap-4">
+            <span className="text-sm text-base-content/70">
+              Page {currentPage} of {pageCount} (
+              {table.getFilteredRowModel().rows.length} total templates
+              {globalFilter ? " matching filter" : ""})
+            </span>
+            <div className="join">
+              <button
+                className="join-item btn btn-sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                «
+              </button>
+              {/* Page number input */}
+              <input
+                type="number"
+                value={currentPage}
+                onChange={(e) =>
+                  table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
+                }
+                className="join-item input input-sm w-[80px] text-center"
+              />
+              <button
+                className="join-item btn btn-sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                »
+              </button>
+            </div>
           </div>
         </div>
       </div>

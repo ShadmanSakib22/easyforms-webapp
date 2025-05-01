@@ -24,9 +24,6 @@ const page = async () => {
   return (
     <div className="container max-w-[1100px] mx-auto px-4">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
-      <p className="mb-6">
-        Welcome, <span className="text-primary">{currentUserEmail}</span>{" "}
-      </p>
 
       {/* Admin-Tabs */}
       <div className="mb-6">

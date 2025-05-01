@@ -1,22 +1,19 @@
 // app/(protected-pages)/adminpanel/forms/page.js
 import React from "react";
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs/server";
 import { adminPermissionsCheck } from "@/app/_actions/commonActions";
+import { fetchAdminsTemplateList } from "@/app/_actions/templateActions";
+import TemplatesTable from "@/app/_components/TemplatesTable";
 
 const page = async () => {
   await adminPermissionsCheck();
 
-  const user = await currentUser();
-  const currentUserEmail = user?.emailAddresses[0]?.emailAddress;
+  const templatesList = await fetchAdminsTemplateList();
 
   // --- Render Admin Content ---
   return (
     <div className="container max-w-[1100px] mx-auto px-4">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
-      <p className="mb-6">
-        Welcome, <span className="text-primary">{currentUserEmail}</span>{" "}
-      </p>
 
       {/* Admin-Tabs */}
       <div className="mb-6">
@@ -31,6 +28,7 @@ const page = async () => {
       </div>
 
       {/* Forms Table */}
+      <TemplatesTable templatesList={templatesList} />
     </div>
   );
 };
