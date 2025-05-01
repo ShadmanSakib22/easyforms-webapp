@@ -69,7 +69,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
     : "N/A";
 
   return (
-    <div className="container max-w-[1024px] mx-auto my-10 md:my-20 px-4">
+    <div className="container max-w-[1024px] mx-auto mb-[3rem] px-4">
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         {/* Render Title */}
         <h1 className="text-2xl font-mono font-bold mb-2">

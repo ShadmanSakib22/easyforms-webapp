@@ -40,9 +40,11 @@ const page = async () => {
             </Link>
           )}
         </ul>
-        <button className="btn btn-sm btn-success btn-outline">
-          Create Form <Plus className="w-4 h-4" />
-        </button>
+        <Link href={"/templates/builder"}>
+          <button className="btn btn-sm btn-success btn-outline">
+            Create Form <Plus className="w-4 h-4" />
+          </button>
+        </Link>
       </div>
       <TemplatesTable templatesList={templatesList} />
       <InvitesTable invitesList={invitesList} />

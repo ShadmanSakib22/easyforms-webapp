@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,6 +8,7 @@ import {
   SignedIn,
   SignedOut,
   SignOutButton,
+  useUser,
 } from "@clerk/nextjs";
 import {
   ChevronDown,
@@ -24,6 +25,64 @@ import {
 const Navbar = () => {
   const [language, setLanguage] = useState("en");
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
+  const themes = [
+    { value: "winter", label: "Light" },
+    { value: "dim", label: "Dark" },
+    { value: "coffee", label: "Coffee" },
+    { value: "night", label: "Night" },
+  ];
+
+  // Scroll States
+  const [showHeader, setShowHeader] = useState(true);
+  const lastScrollY = useRef(0);
+  const scrollThreshold = 50; // Pixels to scroll before hiding
+  // Scroll effect for header visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isScrollingUp = currentScrollY < lastScrollY.current;
+      const isScrollingDown = currentScrollY > lastScrollY.current;
+      const isAtTop = currentScrollY < scrollThreshold; // Use threshold
+
+      if (isAtTop) {
+        // Always show header at the top
+        setShowHeader(true);
+      } else if (isScrollingDown && currentScrollY > scrollThreshold) {
+        // Hide header when scrolling down past the threshold
+        setShowHeader(false);
+      } else if (isScrollingUp) {
+        // Always show header when scrolling up
+        setShowHeader(true);
+      }
+
+      lastScrollY.current = currentScrollY; // Update last scroll position
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Theme change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("daisyui-theme");
+
+      // If saved theme exists and is one of the available themes, apply it
+      const themeValues = themes.map((t) => t.value);
+      if (savedTheme && themeValues.includes(savedTheme)) {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      }
+    }
+  }, []);
+
+  // Handle theme change
+  const handleThemeChange = (themeValue) => {
+    localStorage.setItem("daisyui-theme", themeValue);
+    document.documentElement.setAttribute("data-theme", themeValue);
+  };
 
   // Close side nav when screen size changes to desktop
   useEffect(() => {
@@ -58,193 +117,182 @@ const Navbar = () => {
     setIsSideNavOpen(false);
   };
 
+  const { user } = useUser();
+  const currentUserEmail = user?.emailAddresses?.[0]?.emailAddress;
+
   return (
-    <>
-      <header className="bg-base-200 sticky top-0 z-30">
-        <div className="px-4 max-w-[1536px] mx-auto navbar justify-between gap-4">
-          {/* Logo */}
-          <Link href={"/"} className="flex gap-1 items-center">
-            <Image
-              src="/logo.ico"
-              alt="ezForms logo"
-              height={28}
-              width={28}
-              priority
-            />
-            <div className="text-xl text-primary font-bold font-mono">
-              ezForms
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex gap-4 items-center ">
-            {/* Dashboard */}
-            <Link
-              href={"/dashboard"}
-              className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
-            >
-              Dashboard
-            </Link>
-            {/* Documentation */}
-            <Link
-              href={"/docs"}
-              className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
-            >
-              Docs
-            </Link>
-            {/* Support */}
-            <Link
-              href={"/support"}
-              className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
-            >
-              Support
-            </Link>
-            {/* Search - Forms */}
-            <label className="input input-sm">
-              <Search className="h-4 w-4" />
-              <input type="search" required placeholder="Search" />
-            </label>
-          </nav>
-
-          {/* Desktop Controls */}
-          <div className="hidden lg:flex gap-3 items-center">
-            {/* Language switcher */}
-            <div className="dropdown dropdown-center">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-sm btn-outline btn-primary"
-              >
-                <Globe className="h-4 w-4" />
-                {language === "en" ? "En" : "Es"}
-                <ChevronDown className="h-4 w-4" />
+    <div className="mb-[8rem]">
+      <header
+        className={`fixed top-0 w-full z-[50] transition-transform duration-300 ease-in-out ${
+          showHeader ? "translate-y-0" : "-translate-y-full" // Apply negative transform when hidden
+        }`}
+      >
+        <div className="bg-base-200 ">
+          <div className="px-4 max-w-[1200px] mx-auto navbar justify-between gap-3">
+            {/* Logo */}
+            <Link href={"/"} className="flex gap-1 items-center flex-1">
+              <Image
+                src="/logo.ico"
+                alt="ezForms logo"
+                height={28}
+                width={28}
+                priority
+              />
+              <div className="text-xl text-primary font-bold font-mono">
+                ezForms
               </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content mt-2 bg-base-100 border border-primary rounded-box z-1 w-[120px] p-2 shadow-2xl"
-              >
-                <li>
-                  <button
-                    onClick={() => setLanguage("en")}
-                    className={`btn btn-sm btn-block justify-start btn-ghost ${
-                      language === "en" ? "hover:btn-primary" : ""
-                    }`}
-                  >
-                    English (En)
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => setLanguage("es")}
-                    className={`btn btn-sm btn-block justify-start btn-ghost ${
-                      language === "es" ? "hover:btn-primary" : ""
-                    }`}
-                  >
-                    Español (Es)
-                  </button>
-                </li>
-              </ul>
-            </div>
+            </Link>
 
-            {/* Theme switcher */}
-            <div className="dropdown dropdown-center">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-sm btn-outline btn-primary"
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex gap-4 items-center bg-base-300 pl-4 pr-1 py-1 rounded-lg">
+              {/* Dashboard */}
+              <Link
+                href={"/dashboard"}
+                className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
               >
-                Theme
-                <ChevronDown className="h-4 w-4" />
+                Dashboard
+              </Link>
+              {/* Documentation */}
+              <Link
+                href={"/#"}
+                className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
+              >
+                Docs
+              </Link>
+              {/* Support */}
+              <Link
+                href={"/#"}
+                className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
+              >
+                Support
+              </Link>
+              {/* Search - Forms */}
+              <label className="input input-sm">
+                <Search className="h-4 w-4" />
+                <input type="search" required placeholder="Search" />
+              </label>
+            </nav>
+
+            {/* Desktop Controls */}
+            <div className="hidden lg:flex gap-3 items-center">
+              {/* Language switcher */}
+              <div className="dropdown dropdown-center">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-sm btn-outline btn-primary"
+                >
+                  <Globe className="h-4 w-4" />
+                  {language === "en" ? "En" : "Es"}
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content mt-2 bg-base-100 border border-primary rounded-box z-1 w-[120px] p-2 shadow-2xl"
+                >
+                  <li>
+                    <button
+                      onClick={() => setLanguage("en")}
+                      className={`btn btn-sm btn-block justify-start btn-ghost ${
+                        language === "en" ? "hover:btn-primary" : ""
+                      }`}
+                    >
+                      English (En)
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setLanguage("es")}
+                      className={`btn btn-sm btn-block justify-start btn-ghost ${
+                        language === "es" ? "hover:btn-primary" : ""
+                      }`}
+                    >
+                      Español (Es)
+                    </button>
+                  </li>
+                </ul>
               </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content mt-2 bg-base-100 border border-primary rounded-box z-1 w-[120px] p-2 shadow-2xl"
+
+              {/* Theme switcher */}
+              <div className="dropdown dropdown-center">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-sm btn-outline btn-primary"
+                >
+                  Theme
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content mt-2 bg-base-100 border border-primary rounded-box z-1 w-[120px] p-2 shadow-2xl"
+                >
+                  {themes.map((theme) => (
+                    <li key={theme.value}>
+                      <input
+                        type="radio"
+                        name="theme-dropdown"
+                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                        aria-label={theme.label}
+                        value={theme.value}
+                        onChange={() => handleThemeChange(theme.value)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Auth buttons */}
+              <div className="flex gap-2 items-center">
+                <SignedIn>
+                  <SignOutButton className="btn btn-secondary">
+                    Sign Out
+                  </SignOutButton>
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton className="btn btn-primary">
+                    Sign In
+                  </SignInButton>
+                  <SignUpButton className="btn btn-secondary">
+                    Sign Up
+                  </SignUpButton>
+                </SignedOut>
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex lg:hidden">
+              <button
+                onClick={toggleSideNav}
+                className="btn btn-ghost btn-circle"
+                aria-label="Toggle menu"
               >
-                <li>
-                  <input
-                    type="radio"
-                    name="theme-dropdown"
-                    className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                    aria-label="Light"
-                    value="light"
-                  />
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    name="theme-dropdown"
-                    className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                    aria-label="Dark"
-                    value="dark"
-                  />
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    name="theme-dropdown"
-                    className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                    aria-label="Corporate"
-                    value="corporate"
-                  />
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    name="theme-dropdown"
-                    className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                    aria-label="Night"
-                    value="night"
-                  />
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    name="theme-dropdown"
-                    className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                    aria-label="Coffee"
-                    value="coffee"
-                  />
-                </li>
-              </ul>
+                <Menu className="h-6 w-6" />
+              </button>
             </div>
-
-            {/* Auth buttons */}
-            <div className="flex gap-2 items-center">
-              <SignedIn>
-                <SignOutButton className="btn btn-secondary">
-                  Sign Out
-                </SignOutButton>
-              </SignedIn>
-              <SignedOut>
-                <SignInButton className="btn btn-primary">Sign In</SignInButton>
-                <SignUpButton className="btn btn-secondary">
-                  Sign Up
-                </SignUpButton>
-              </SignedOut>
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden">
-            <button
-              onClick={toggleSideNav}
-              className="btn btn-ghost btn-circle"
-              aria-label="Toggle menu"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
           </div>
         </div>
+        {currentUserEmail && (
+          <div className="hidden lg:flex justify-end px-4 max-w-[1200px] mx-auto">
+            <div className="badge border-primary text-primary m-2">
+              Signed In as: {currentUserEmail}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Mobile Side Navigation */}
       <div
-        className={`fixed inset-0 bg-base-300 bg-opacity-50 z-40 transition-opacity duration-300 ${isSideNavOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 bg-base-300 z-[90] transition-opacity duration-300 ${
+          isSideNavOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
         onClick={closeSideNav}
       ></div>
 
       <div
-        className={`fixed top-0 right-0 h-full w-[280px] bg-base-100 z-50 shadow-xl transform transition-transform duration-300 ease-in-out ${isSideNavOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-full w-[280px] bg-base-100 z-[100] shadow-xl transform transition-transform duration-300 ease-in-out ${
+          isSideNavOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         <div className="flex flex-col h-full">
           {/* Side Nav Header */}
@@ -307,7 +355,7 @@ const Navbar = () => {
               </li>
               <li>
                 <Link
-                  href="/docs"
+                  href="/#"
                   onClick={closeSideNav}
                   className="flex items-center gap-3 py-3"
                 >
@@ -317,7 +365,7 @@ const Navbar = () => {
               </li>
               <li>
                 <Link
-                  href="/support"
+                  href="/#"
                   onClick={closeSideNav}
                   className="flex items-center gap-3 py-3"
                 >
@@ -381,51 +429,18 @@ const Navbar = () => {
                   tabIndex={0}
                   className="dropdown-content my-1 bg-base-100 border border-primary rounded-box z-1 w-full p-2 shadow-2xl"
                 >
-                  <li>
-                    <input
-                      type="radio"
-                      name="theme-dropdown-mobile"
-                      className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                      aria-label="Light"
-                      value="light"
-                    />
-                  </li>
-                  <li>
-                    <input
-                      type="radio"
-                      name="theme-dropdown-mobile"
-                      className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                      aria-label="Dark"
-                      value="dark"
-                    />
-                  </li>
-                  <li>
-                    <input
-                      type="radio"
-                      name="theme-dropdown-mobile"
-                      className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                      aria-label="Corporate"
-                      value="corporate"
-                    />
-                  </li>
-                  <li>
-                    <input
-                      type="radio"
-                      name="theme-dropdown-mobile"
-                      className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                      aria-label="Night"
-                      value="night"
-                    />
-                  </li>
-                  <li>
-                    <input
-                      type="radio"
-                      name="theme-dropdown-mobile"
-                      className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                      aria-label="Coffee"
-                      value="coffee"
-                    />
-                  </li>
+                  {themes.map((theme) => (
+                    <li key={theme.value}>
+                      <input
+                        type="radio"
+                        name="theme-dropdown-mobile"
+                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                        aria-label={theme.label}
+                        value={theme.value}
+                        onChange={() => handleThemeChange(theme.value)}
+                      />
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -433,6 +448,11 @@ const Navbar = () => {
 
           {/* Auth Buttons */}
           <div className="p-4 border-t border-base-300">
+            {currentUserEmail && (
+              <p className="text-xs text-base-content/90 pb-2">
+                {currentUserEmail}
+              </p>
+            )}
             <SignedIn>
               <SignOutButton className="btn btn-secondary btn-block">
                 Sign Out
@@ -451,7 +471,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -12,7 +12,7 @@ const page = async () => {
 
   // --- Render Admin Content ---
   return (
-    <div className="container mx-auto p-4 md:p-8">
+    <div className="container max-w-[1100px] mx-auto px-4">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
       <p className="mb-6">
         Welcome, <span className="text-primary">{currentUserEmail}</span>{" "}

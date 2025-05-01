@@ -3,7 +3,7 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function Page() {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center my-4">
       <SignIn
         appearance={{
           elements: {
@@ -14,7 +14,8 @@ export default function Page() {
             socialButtonsBlockButtonText: "text-primary!",
             formFieldLabel: "text-primary!",
             input: "bg-none! bg-base-100! text-base-content!",
-            formButtonPrimary: "btn! btn-sm! btn-primary!",
+            formButtonPrimary:
+              "bg-base-200! text-base-content! border-1! border-base-content/20! shadow-none!",
             footer: "bg-none! bg-base-200!",
             footerActionLink: "text-primary!",
           },

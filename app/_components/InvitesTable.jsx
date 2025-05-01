@@ -121,7 +121,7 @@ const InvitesTable = ({ invitesList }) => {
 
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
-  console.log("InvitesTable.jsx: memoizedData", memoizedData);
+  // console.log("InvitesTable.jsx: memoizedData", memoizedData);
 
   const table = useReactTable({
     data: memoizedData,

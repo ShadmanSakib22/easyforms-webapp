@@ -31,7 +31,7 @@ export default function TemplateDetails({ template }) {
   //   console.log(template);
 
   return (
-    <div className="container max-w-[1100px] mx-auto my-[3rem] px-4">
+    <div className="container max-w-[1100px] mx-auto mb-[3rem] px-4">
       <div className="mb-4 md:mb-8">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
           <ArrowLeft size={16} className="mr-1" /> Return to Dashboard

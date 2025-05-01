@@ -123,7 +123,7 @@ export default function TemplateBuilder({ templateId }) {
   };
 
   return (
-    <div className="container mx-auto my-[3rem] px-4 max-w-[1100px]">
+    <div className="container mx-auto mb-[3rem] px-4 max-w-[1100px]">
       <div className="mb-4 md:mb-8">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
           <ArrowLeft size={16} className="mr-1" /> Return to Dashboard
