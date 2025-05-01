@@ -75,3 +75,13 @@ body {
 .subtitle-style {
   @apply text-base-content/80 bg-base-100 border border-base-300 p-4 rounded-lg mb-4;
 }
+
+#disqus_thread {
+  color: #050505 !important;
+  background-color: #fff !important;
+  padding: 10px;
+  border-radius: 14px;
+}
+#disqus_thread a {
+  color: #777 !important;
+}

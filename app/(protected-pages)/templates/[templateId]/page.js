@@ -17,8 +17,6 @@ export default async function TemplatePage({ params }) {
     templateId
   );
 
-  const pageUrl = `http://localhost:3000/templates/${templateId}`;
-
   return (
     <>
       <TemplateForm

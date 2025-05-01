@@ -3,18 +3,23 @@
 import { DiscussionEmbed } from "disqus-react";
 
 export default function DisqusComments({ templateId, templateTitle }) {
-  const pageUrl = `https://easyforms-webapp.vercel.app/templates/${templateId}`;
+  const pageUrl = `${
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  }/templates/${templateId}`;
+
+  console.log("Disqus Comments Component - Page URL:", pageUrl);
 
   return (
-    <div className="container w-max-[1100px] mx-auto px-4">
+    <div className="container max-w-[1100px] bg-base-200 border border-base-300 mx-auto p-4 rounded-lg">
       <h2 className="text-xl font-bold mb-4">Comments</h2>
+
       <DiscussionEmbed
         shortname="https-easyforms-webapp-vercel-app"
         config={{
           url: pageUrl,
           identifier: templateId,
           title: templateTitle || "Untitled Template",
-          language: "zh_TW",
+          language: "en",
         }}
       />
     </div>
