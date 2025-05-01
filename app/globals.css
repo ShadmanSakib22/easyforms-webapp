@@ -80,8 +80,11 @@ body {
   color: #050505 !important;
   background-color: #fff !important;
   padding: 10px;
-  border-radius: 14px;
+  border-radius: 8px;
 }
 #disqus_thread a {
   color: #777 !important;
+}
+[data-theme="winter"] .theme-overlay {
+  opacity: 20% !important;
 }
