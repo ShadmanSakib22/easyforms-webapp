@@ -3,7 +3,7 @@
 import { DiscussionEmbed } from "disqus-react";
 
 export default function DisqusComments({ templateId, templateTitle }) {
-  const pageUrl = `http://localhost:3000/templates/${templateId}`;
+  const pageUrl = `https://easyforms-webapp.vercel.app/templates/${templateId}`;
 
   return (
     <div className="container w-max-[1100px] mx-auto px-4">
