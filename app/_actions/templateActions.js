@@ -640,3 +640,46 @@ export async function fetchAdminsTemplateList() {
     return null;
   }
 }
+
+export async function searchTemplates(searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
+    return [];
+  }
+  try {
+    const searchTerm = searchQuery.trim();
+    // Search for templates where the search term appears in title, description, or questions
+    const templates = await prisma.template.findMany({
+      where: {
+        access: "public",
+        OR: [
+          { title: { contains: searchTerm, mode: "insensitive" } },
+          { description: { contains: searchTerm, mode: "insensitive" } },
+          {
+            questions: {
+              some: {
+                OR: [
+                  { label: { contains: searchTerm, mode: "insensitive" } },
+                  {
+                    description: { contains: searchTerm, mode: "insensitive" },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    return templates;
+  } catch (error) {
+    console.error("Error searching templates:", error);
+    return [];
+  }
+}

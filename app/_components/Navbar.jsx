@@ -166,11 +166,24 @@ const Navbar = () => {
               >
                 Support
               </Link>
-              {/* Search - Forms */}
-              <label className="input input-sm">
-                <Search className="h-4 w-4" />
-                <input type="search" required placeholder="Search" />
-              </label>
+              {/* Search - Form */}
+              <form action="/search" method="get" className="join">
+                <label className="input input-sm join-item">
+                  <input
+                    type="search"
+                    name="q"
+                    required
+                    placeholder="Search"
+                    className="flex-grow"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className="btn btn-sm join-item border border-base-content/20"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </form>
             </nav>
 
             {/* Desktop Controls */}
@@ -324,10 +337,23 @@ const Navbar = () => {
 
           {/* Search */}
           <div className="p-4 border-b border-base-300">
-            <label className="input input-bordered w-full flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              <input type="search" placeholder="Search" className="grow" />
-            </label>
+            <form action="/search" method="get" className="join flex">
+              <label className="input input-sm join-item flex-1">
+                <input
+                  type="search"
+                  name="q"
+                  required
+                  placeholder="Search"
+                  className="w-full"
+                />
+              </label>
+              <button
+                type="submit"
+                className="btn btn-sm join-item border border-base-content/20"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
           </div>
 
           {/* Navigation Links */}
