@@ -1,0 +1,12 @@
+{
+  "navbar": {
+    "dashboard": "Dashboard",
+    "docs": "Docs",
+    "support": "Support",
+    "search": "Search",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "signedInAs": "Signed In as:"
+  }
+}

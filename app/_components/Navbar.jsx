@@ -21,9 +21,30 @@ import {
   FileText,
   HelpCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const t = useTranslations("navbar");
+  const router = useRouter();
   const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const localeCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("locale="));
+    if (localeCookie) {
+      setLanguage(localeCookie.split("=")[1]);
+    }
+  }, []);
+
+  const handleLanguageChange = (newLocale) => {
+    // Set cookie
+    document.cookie = `locale=${newLocale};path=/;max-age=31536000`;
+    setLanguage(newLocale);
+    router.refresh();
+  };
+
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const themes = [
     { value: "winter", label: "Light" },
@@ -150,21 +171,21 @@ const Navbar = () => {
                 href={"/dashboard"}
                 className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
               >
-                Dashboard
+                {t("dashboard")}
               </Link>
               {/* Documentation */}
               <Link
                 href={"/#"}
                 className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
               >
-                Docs
+                {t("docs")}
               </Link>
               {/* Support */}
               <Link
                 href={"/#"}
                 className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
               >
-                Support
+                {t("support")}
               </Link>
               {/* Search - Form */}
               <form action="/search" method="get" className="join">
@@ -173,7 +194,7 @@ const Navbar = () => {
                     type="search"
                     name="q"
                     required
-                    placeholder="Search"
+                    placeholder={t("search")}
                     className="flex-grow"
                   />
                 </label>
@@ -205,7 +226,7 @@ const Navbar = () => {
                 >
                   <li>
                     <button
-                      onClick={() => setLanguage("en")}
+                      onClick={() => handleLanguageChange("en")}
                       className={`btn btn-sm btn-block justify-start btn-ghost ${
                         language === "en" ? "hover:btn-primary" : ""
                       }`}
@@ -215,7 +236,7 @@ const Navbar = () => {
                   </li>
                   <li>
                     <button
-                      onClick={() => setLanguage("es")}
+                      onClick={() => handleLanguageChange("es")}
                       className={`btn btn-sm btn-block justify-start btn-ghost ${
                         language === "es" ? "hover:btn-primary" : ""
                       }`}
@@ -259,15 +280,15 @@ const Navbar = () => {
               <div className="flex gap-2 items-center">
                 <SignedIn>
                   <SignOutButton className="btn btn-secondary">
-                    Sign Out
+                    {t("signOut")}
                   </SignOutButton>
                 </SignedIn>
                 <SignedOut>
                   <SignInButton className="btn btn-primary">
-                    Sign In
+                    {t("signIn")}
                   </SignInButton>
                   <SignUpButton className="btn btn-secondary">
-                    Sign Up
+                    {t("signUp")}
                   </SignUpButton>
                 </SignedOut>
               </div>
@@ -288,7 +309,7 @@ const Navbar = () => {
         {currentUserEmail && (
           <div className="hidden lg:flex justify-end px-4 max-w-[1200px] mx-auto">
             <div className="badge border-primary text-primary m-2">
-              Signed In as: {currentUserEmail}
+              {t("signedInAs")} {currentUserEmail}
             </div>
           </div>
         )}
@@ -343,7 +364,7 @@ const Navbar = () => {
                   type="search"
                   name="q"
                   required
-                  placeholder="Search"
+                  placeholder={t("search")}
                   className="w-full"
                 />
               </label>
@@ -376,7 +397,7 @@ const Navbar = () => {
                   className="flex items-center gap-3 py-3"
                 >
                   <LayoutDashboard className="h-5 w-5" />
-                  <span>Dashboard</span>
+                  <span>{t("dashboard")}</span>
                 </Link>
               </li>
               <li>
@@ -386,7 +407,7 @@ const Navbar = () => {
                   className="flex items-center gap-3 py-3"
                 >
                   <FileText className="h-5 w-5" />
-                  <span>Documentation</span>
+                  <span>{t("docs")}</span>
                 </Link>
               </li>
               <li>
@@ -396,7 +417,7 @@ const Navbar = () => {
                   className="flex items-center gap-3 py-3"
                 >
                   <HelpCircle className="h-5 w-5" />
-                  <span>Support</span>
+                  <span>{t("support")}</span>
                 </Link>
               </li>
             </ul>
@@ -481,16 +502,16 @@ const Navbar = () => {
             )}
             <SignedIn>
               <SignOutButton className="btn btn-secondary btn-block">
-                Sign Out
+                {t("signOut")}
               </SignOutButton>
             </SignedIn>
             <SignedOut>
               <div className="flex flex-col gap-2">
                 <SignInButton className="btn btn-primary btn-block">
-                  Sign In
+                  {t("signIn")}
                 </SignInButton>
                 <SignUpButton className="btn btn-secondary btn-block">
-                  Sign Up
+                  {t("signUp")}
                 </SignUpButton>
               </div>
             </SignedOut>

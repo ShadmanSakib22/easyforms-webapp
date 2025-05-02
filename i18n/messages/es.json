@@ -1,0 +1,12 @@
+{
+  "navbar": {
+    "dashboard": "Panel",
+    "docs": "Documentación",
+    "support": "Soporte",
+    "search": "Buscar",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar Sesión",
+    "signedInAs": "Conectado como:"
+  }
+}
