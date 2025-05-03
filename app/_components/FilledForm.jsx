@@ -5,6 +5,7 @@ import { ArrowLeft, ListCheck } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 
 const FilledForm = ({ submission, submittedBy, templateId }) => {
   if (!submission) {
@@ -17,6 +18,8 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
     ? format(new Date(updatedAt), "d MMMM yyyy - h:mm aaa")
     : "N/A";
 
+  const t = useTranslations("form");
+
   return (
     <div className="container max-w-[1100px] mx-auto mb-[3rem] px-4">
       <div className="mb-4 md:mb-8">
@@ -24,14 +27,14 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
           href={`/templates/details/${templateId}`}
           className="btn btn-sm btn-primary btn-outline"
         >
-          <ArrowLeft size={16} className="mr-1" /> Return to Details
+          <ArrowLeft size={16} className="mr-1" /> {t("return_to_details")}
         </Link>
       </div>
 
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         <h1 className="subheading-style">
           {" "}
-          <ListCheck /> Form Response
+          <ListCheck /> {t("form_response")}
         </h1>
 
         <h1 className="text-2xl font-mono font-bold mb-2">
@@ -39,9 +42,10 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
         </h1>
 
         <div className="mb-6 text-base-content/70">
-          Submitted By: <span className="text-primary/80">{submittedBy}</span>
+          {t("submitted_by")}:{" "}
+          <span className="text-primary/80">{submittedBy}</span>
           <br />
-          Date Submitted:{" "}
+          {t("date_submitted")}:{" "}
           <span className="text-sm text-primary/80">{formattedDateTime}</span>
         </div>
 
@@ -89,7 +93,7 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
                 </div>
 
                 <div className="mt-4 p-3 bg-base-300 rounded-md">
-                  <p className="font-mono text-sm">Answer:</p>
+                  <p className="font-mono text-sm">{t("answer")}:</p>
                   <div className="mt-1 text-base-content/90">
                     {question.answer || "No answer provided"}
                   </div>
@@ -98,7 +102,7 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
             ))
           ) : (
             <p className="text-center text-base-content/70 py-6">
-              No questions found in this submission.
+              {t("no_questions_found")}
             </p>
           )}
         </div>

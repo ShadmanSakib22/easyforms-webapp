@@ -7,6 +7,26 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "signOut": "Sign Out",
-    "signedInAs": "Signed In as:"
-  }
+    "signedInAs": "Signed In as:",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "coffee": "Coffee",
+    "night": "Night"
+  },
+  "footer": {
+    "copyright": "© 2025 ezForms. All rights reserved."
+  },
+  "builder": {
+    "add_question": "Add Question"
+  },
+  "form": {
+    "return_to_details": "Return to Details",
+    "form_response": "Form Response",
+    "submitted_by": "Submitted By",
+    "date_submitted": "Date Submitted",
+    "answer": "Answer",
+    "no_questions_found": "No questions found in this submission."
+  },
+  "table": {}
 }

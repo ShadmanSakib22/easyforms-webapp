@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Plus } from "lucide-react";
 import QuestionItem from "./QuestionItem";
+import { useTranslations } from "next-intl";
 
 export default function DraggableQuestionsList({
   questions,
@@ -31,6 +32,8 @@ export default function DraggableQuestionsList({
       autoScrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [questions.length]);
+
+  const t = useTranslations("builder");
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -65,7 +68,7 @@ export default function DraggableQuestionsList({
               onClick={addQuestion}
               className="btn btn-primary btn-outline"
             >
-              <Plus className="w-4 h-4 mr-1" /> Add Question
+              <Plus className="w-4 h-4 mr-1" /> {t("add_question")}
             </button>
           </div>
         )}

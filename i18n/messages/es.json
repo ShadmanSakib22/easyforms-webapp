@@ -7,6 +7,25 @@
     "signIn": "Iniciar Sesión",
     "signUp": "Registrarse",
     "signOut": "Cerrar Sesión",
-    "signedInAs": "Conectado como:"
+    "signedInAs": "Conectado como:",
+    "theme": "Tema",
+    "light": "Luz",
+    "dark": "Oscura",
+    "coffee": "Café",
+    "night": "Noche"
+  },
+  "footer": {
+    "copyright": "© 2025 ezForms. Todos los derechos reservados."
+  },
+  "builder": {
+    "add_question": "Agregar Pregunta"
+  },
+  "form": {
+    "return_to_details": "Volver a Detalles",
+    "form_response": "Formulario de respuesta",
+    "submitted_by": "Presentado por",
+    "date_submitted": "Fecha de presentación",
+    "answer": "Respuesta",
+    "no_questions_found": "No se han encontrado preguntas en esta presentación."
   }
 }

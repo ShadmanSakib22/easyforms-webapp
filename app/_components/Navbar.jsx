@@ -29,6 +29,7 @@ const Navbar = () => {
   const router = useRouter();
   const [language, setLanguage] = useState("en");
 
+  // Language Selector
   useEffect(() => {
     const localeCookie = document.cookie
       .split("; ")
@@ -47,10 +48,10 @@ const Navbar = () => {
 
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const themes = [
-    { value: "winter", label: "Light" },
-    { value: "dim", label: "Dark" },
-    { value: "coffee", label: "Coffee" },
-    { value: "night", label: "Night" },
+    { value: "winter", label: t("light") },
+    { value: "dim", label: t("dark") },
+    { value: "coffee", label: t("coffee") },
+    { value: "night", label: t("night") },
   ];
 
   // Scroll States
@@ -254,7 +255,7 @@ const Navbar = () => {
                   role="button"
                   className="btn btn-sm btn-outline btn-primary"
                 >
-                  Theme
+                  {t("theme")}
                   <ChevronDown className="h-4 w-4" />
                 </div>
                 <ul
@@ -470,7 +471,7 @@ const Navbar = () => {
                   role="button"
                   className="btn btn-outline btn-primary btn-block"
                 >
-                  Theme
+                  {t("theme")}
                 </div>
                 <ul
                   tabIndex={0}
