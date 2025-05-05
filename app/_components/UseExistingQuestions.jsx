@@ -7,8 +7,10 @@ import {
 } from "@/app/_actions/templateActions";
 import Select from "react-select";
 import { useTemplateStore } from "@/store/templateStore";
+import { useTranslations } from "next-intl";
 
 const UseExistingQuestions = () => {
+  const t = useTranslations("builder");
   const [templateOptions, setTemplateOptions] = useState([]);
   const { selectedTemplate, setSelectedTemplate, setQuestions } =
     useTemplateStore();
@@ -54,7 +56,7 @@ const UseExistingQuestions = () => {
     <div className="flex mt-2 justify-end w-full">
       <div className="w-[350px]" suppressHydrationWarning>
         <Select
-          placeholder="Quickstart from a public template..."
+          placeholder={t("Quickstart from a public template")}
           options={templateOptions}
           value={selectedTemplate}
           onChange={handleTemplateSelect}
@@ -70,10 +72,10 @@ const UseExistingQuestions = () => {
             option: () =>
               "text-xs! cursor-pointer! rounded-md! bg-base-100! hover:bg-primary/40! my-1!",
           }}
-          noOptionsMessage={() => "No Templates found"}
+          noOptionsMessage={() => t("No Templates found")}
         />
         <p className="text-error text-xs font-mono mt-1 text-right">
-          Existing questions will be over-written!
+          {t("Existing questions will be over-written!")}
         </p>
       </div>
     </div>

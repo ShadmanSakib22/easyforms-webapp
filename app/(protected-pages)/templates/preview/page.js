@@ -7,11 +7,14 @@ import { useTemplateStore } from "@/store/templateStore";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 function ViewQuestion({ question, index }) {
   const { type, label, description, placeholder, options, show, required } =
     question;
   if (!show) return null;
+
+  const t = useTranslations("form");
 
   return (
     <div className="mb-6 p-4 border border-base-300 rounded-lg bg-base-100 shadow-sm">
@@ -21,7 +24,7 @@ function ViewQuestion({ question, index }) {
         </strong>
 
         <strong className="font-bold text-base-content/70 w-[80%]">
-          {label || "No question text"}
+          {label || t("no question text")}
           {required ? "*" : ""}
         </strong>
         <br />
@@ -58,27 +61,27 @@ function ViewQuestion({ question, index }) {
       {type === "single-line" && (
         <input
           type="text"
-          placeholder={placeholder || "Answer here..."}
+          placeholder={placeholder || t("answer here")}
           className="input input-bordered w-full mt-1 text-sm"
         />
       )}
       {type === "multi-line" && (
         <textarea
-          placeholder={placeholder || "Answer here..."}
+          placeholder={placeholder || t("answer here")}
           className="textarea textarea-bordered w-full mt-1 text-sm h-24"
         />
       )}
       {type === "integer" && (
         <input
           type="number"
-          placeholder={placeholder || "User would enter a number here..."}
+          placeholder={placeholder || t("answer here")}
           className="input input-bordered w-full mt-1 text-sm"
         />
       )}
       {type === "checkbox" && (
         <div className="mt-2 space-y-2 pl-2">
           <p className="font-mono text-xs text-base-content/70">
-            Can Select Multiple:
+            {t("Can Select Multiple")}:
           </p>
           {options && options.length > 0 ? (
             options.map((opt, index) => (
@@ -91,7 +94,7 @@ function ViewQuestion({ question, index }) {
             ))
           ) : (
             <p className="text-xs text-error italic">
-              Error: No options defined for this checkbox group.
+              {t("Error: No options defined")}
             </p>
           )}
         </div>
@@ -99,7 +102,7 @@ function ViewQuestion({ question, index }) {
       {type === "radio-checkbox" && (
         <div className="mt-2 space-y-2 pl-2">
           <p className="font-mono text-xs text-base-content/70">
-            Can Select Only One:
+            {t("Can Select Only One")}:
           </p>
           {options && options.length > 0 ? (
             options.map((opt, index) => (
@@ -116,7 +119,7 @@ function ViewQuestion({ question, index }) {
             ))
           ) : (
             <p className="text-xs text-error italic">
-              Error: No options defined for this radio group.
+              {t("Error: No options defined")}
             </p>
           )}
         </div>
@@ -134,11 +137,13 @@ export default function PreviewTemplatePage() {
   const tags = useTemplateStore((state) => state.tags);
   const questions = useTemplateStore((state) => state.questions);
 
+  const t = useTranslations("form");
+
   return (
     <div className="container max-w-[1024px] mx-auto my-10 md:my-20 px-4">
       <div className="mt-10 mb-4">
         <Link href="/templates/builder" className="btn btn-sm btn-ghost">
-          <ArrowLeft size={16} className="mr-1" /> Back to Editor
+          <ArrowLeft size={16} className="mr-1" /> {t("return to builder")}
         </Link>
       </div>
 
@@ -199,21 +204,21 @@ export default function PreviewTemplatePage() {
           {topic && (
             <div>
               <h4 className="badge border-primary bg-base-300 mt-8 capitalize font-semibold font-mono text-base-content/90">
-                Topic: <span className="font-normal">{topic}</span>
+                {t("Topic")}: <span className="font-normal">{topic}</span>
               </h4>
               <p className="mt-4 text-sm text-base-content/70">
-                Published on:{" "}
+                {t("Published on")}:{" "}
                 <span className="font-semibold">Placeholder Date</span>
               </p>
               <p className="mt-2 text-sm text-base-content/70">
-                Signed in as:{" "}
+                {t("Signed in as")}:{" "}
                 <span className="font-semibold text-primary">
                   Placeholder Email
                 </span>
               </p>
               <fieldset className="mt-4 fieldset bg-base-100 border-base-300 rounded-md border p-3 min-w-[300px] max-w-[600px]">
                 <legend className="fieldset-legend mb-[-10px]">
-                  Tagged By:
+                  {t("Tagged By")}:
                 </legend>
 
                 <div className="flex flex-wrap gap-1">
@@ -227,7 +232,9 @@ export default function PreviewTemplatePage() {
                       </span>
                     ))
                   ) : (
-                    <span className="text-base-content/50">No tags added</span>
+                    <span className="text-base-content/50">
+                      {t("No tags added")}
+                    </span>
                   )}
                 </div>
               </fieldset>
@@ -243,7 +250,7 @@ export default function PreviewTemplatePage() {
             ))
           ) : (
             <p className="text-center text-base-content/70 py-6">
-              This form template has no questions yet.
+              {t("This form template has no questions yet")}.
             </p>
           )}
         </div>
@@ -251,14 +258,14 @@ export default function PreviewTemplatePage() {
         {/* Submit Area (No Action in Preview) */}
         <div className="mt-8 pt-6 flex justify-end">
           <button className="btn btn-success">
-            Submit <CheckCircle />
+            {t("Submit")} <CheckCircle />
           </button>
         </div>
       </article>
 
       <div className="mt-4 mb-4">
         <Link href="/templates/builder" className="btn btn-sm btn-ghost">
-          <ArrowLeft size={16} className="mr-1" /> Back to Editor
+          <ArrowLeft size={16} className="mr-1" /> {t("return to builder")}
         </Link>
       </div>
     </div>

@@ -10,108 +10,16 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   getPaginationRowModel,
-  flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import { Search, Ban, Eye, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Ban, Eye } from "lucide-react";
 import { deleteInvites } from "../_actions/templateActions";
-
-// --- TanStack Table Column Definition ---
-const columnHelper = createColumnHelper();
-const columns = [
-  // Select Column
-  columnHelper.display({
-    id: "select",
-    header: ({ table }) => (
-      <label>
-        <input
-          type="checkbox"
-          className="checkbox checkbox-primary checkbox-sm"
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected()
-              ? "indeterminate"
-              : undefined, // Handle intermediate state
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      </label>
-    ),
-    cell: ({ row }) => (
-      <label>
-        <input
-          type="checkbox"
-          className="checkbox checkbox-primary checkbox-sm"
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected()
-              ? "indeterminate"
-              : undefined,
-            onChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </label>
-    ),
-    // Disable sorting/filtering for select column
-    enableSorting: false,
-    enableColumnFilter: false,
-  }),
-  // Data Columns
-  //   columnHelper.accessor("id", {
-  //     header: "Invite ID",
-  //     cell: (info) => (
-  //       <span className="font-mono text-xs">{info.getValue()}</span>
-  //     ),
-  //     enableSorting: false,
-  //   }),
-  columnHelper.accessor("template.id", {
-    header: "Template ID",
-    cell: (info) => (
-      <span className="font-mono text-xs">{info.getValue()}</span>
-    ),
-    enableSorting: false,
-  }),
-  columnHelper.accessor("template.title", {
-    header: "Title",
-    cell: (info) => <span className="text-sm">{info.getValue()}</span>,
-    enableSorting: true,
-  }),
-  columnHelper.accessor("template.topic", {
-    header: "Topic",
-    cell: (info) => (
-      <span className="text-sm capitalize badge badge-sm border-primary">
-        {info.getValue()}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("template.access", {
-    header: "Access",
-    cell: (info) => (
-      <span className="text-sm capitalize badge badge-sm border-secondary">
-        {info.getValue()}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("template.updatedAt", {
-    header: "Invite Date",
-    cell: (info) => (
-      <span className="text-sm">
-        {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("template.creator.email", {
-    header: "Template Author",
-    cell: (info) => <span className="text-sm">{info.getValue()}</span>,
-    enableSorting: true,
-  }),
-];
+import TableBodyView from "@/app/_components/TableBodyView";
+import TablePaginationControls from "@/app/_components/TablePaginationControls";
+import { useTranslations } from "next-intl";
 
 const InvitesTable = ({ invitesList }) => {
+  const t = useTranslations("table");
   const [data, setData] = useState(invitesList);
   const [sorting, setSorting] = useState([]); // Initial sort state
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
@@ -122,6 +30,94 @@ const InvitesTable = ({ invitesList }) => {
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
   // console.log("InvitesTable.jsx: memoizedData", memoizedData);
+
+  // --- TanStack Table Column Definition ---
+  const columnHelper = createColumnHelper();
+  const columns = [
+    // Select Column
+    columnHelper.display({
+      id: "select",
+      header: ({ table }) => (
+        <label>
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary checkbox-sm"
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected()
+                ? "indeterminate"
+                : undefined, // Handle intermediate state
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        </label>
+      ),
+      cell: ({ row }) => (
+        <label>
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary checkbox-sm"
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected()
+                ? "indeterminate"
+                : undefined,
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        </label>
+      ),
+      // Disable sorting/filtering for select column
+      enableSorting: false,
+      enableColumnFilter: false,
+    }),
+    // Data Columns
+    columnHelper.accessor("template.id", {
+      header: t("template id"),
+      cell: (info) => (
+        <span className="font-mono text-xs">{info.getValue()}</span>
+      ),
+      enableSorting: false,
+    }),
+    columnHelper.accessor("template.title", {
+      header: t("title"),
+      cell: (info) => <span className="text-sm">{info.getValue()}</span>,
+      enableSorting: true,
+    }),
+    columnHelper.accessor("template.topic", {
+      header: t("topic"),
+      cell: (info) => (
+        <span className="text-sm capitalize badge badge-sm border-primary">
+          {info.getValue()}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("template.access", {
+      header: t("access"),
+      cell: (info) => (
+        <span className="text-sm capitalize badge badge-sm border-secondary">
+          {info.getValue()}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("template.updatedAt", {
+      header: t("invite date"),
+      cell: (info) => (
+        <span className="text-sm">
+          {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("template.creator.email", {
+      header: t("template author"),
+      cell: (info) => <span className="text-sm">{info.getValue()}</span>,
+      enableSorting: true,
+    }),
+  ];
 
   const table = useReactTable({
     data: memoizedData,
@@ -198,29 +194,26 @@ const InvitesTable = ({ invitesList }) => {
     const idsToDelete = getSelectedIds();
     if (idsToDelete.length === 0) return;
     executeAction(deleteInvites, idsToDelete, {
-      loading: "Deleting Invite(s)...",
+      loading: t("deleting invites"),
     });
   }, [getSelectedIds, executeAction]);
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
-  const currentPage = table.getState().pagination.pageIndex + 1; // Tanstack is 0-based
-  const pageCount = table.getPageCount();
-  const currentRowsPerPage = table.getState().pagination.pageSize;
 
   return (
     <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
       <h1 className="badge badge-accent badge-outline font-mono mb-4 ">
-        Invites
+        {t("invites")}
       </h1>
-      {/* Top Controls: Search and Actions */}
+      {/* Toolbar */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-100 border border-base-300 rounded-lg">
         <div className="w-full md:w-auto">
           <label className="input input-bordered input-sm flex items-center gap-2 w-full md:w-80">
             <input
               type="text"
               className="grow"
-              placeholder="Search all columns..."
+              placeholder={t("search all columns")}
               value={globalFilter ?? ""}
               onChange={(e) => setGlobalFilter(e.target.value)}
             />
@@ -240,7 +233,7 @@ const InvitesTable = ({ invitesList }) => {
             ) : (
               <Eye className="w-4 h-4" />
             )}
-            View
+            {t("view")}
           </button>
           <button
             className={`btn btn-error btn-sm min-w-[110px] ${
@@ -254,140 +247,23 @@ const InvitesTable = ({ invitesList }) => {
             ) : (
               <Ban className="w-4 h-4" />
             )}
-            Delete ({selectedRowCount})
+            {t("delete")} ({selectedRowCount})
           </button>
         </div>
       </div>
 
-      {/* Table Container */}
-      <div className="overflow-x-auto border border-base-300 rounded-lg">
-        <table className="table table-pin-rows w-full">
-          {/* Head */}
-          <thead className="bg-base-200">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <div
-                        {...{
-                          className: header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-1"
-                            : "flex items-center gap-1",
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        {/* Render Sort Icons */}
-                        {{
-                          asc: <ChevronUp className="w-4 h-4" />,
-                          desc: <ChevronDown className="w-4 h-4" />,
-                        }[header.column.getIsSorted()] ?? null}
-                      </div>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
+      <TableBodyView
+        table={table}
+        t={t}
+        globalFilter={globalFilter}
+        columns={columns}
+      />
 
-          {/* Body */}
-          <tbody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className={`hover:bg-primary/10 ${
-                    row.getIsSelected() ? "bg-primary/20" : ""
-                  }`}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                {/* Use column count from header */}
-                <td
-                  colSpan={
-                    table.getHeaderGroups()[0]?.headers.length || columns.length
-                  }
-                  className="text-center p-4"
-                >
-                  No Data found
-                  {globalFilter ? ` matching "${globalFilter}"` : ""}.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Bottom Controls: Pagination and Rows Per Page */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 py-2">
-        {/* Rows Per Page Selector */}
-        <div className="text-sm text-base-content/70">
-          <label className="flex items-center gap-2 text-nowrap">
-            Rows per page:
-            <select
-              className="select select-bordered select-xs"
-              value={currentRowsPerPage}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-            >
-              {[5, 10, 15, 20, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        {/* Pagination Info and Controls */}
-        <div className="text-center flex flex-wrap items-center gap-4">
-          <span className="text-sm text-base-content/70">
-            Page {currentPage} of {pageCount} (
-            {table.getFilteredRowModel().rows.length} total invites
-            {globalFilter ? " matching filter" : ""})
-          </span>
-          <div className="join">
-            <button
-              className="join-item btn btn-sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              «
-            </button>
-            {/* Page number input */}
-            <input
-              type="number"
-              value={currentPage}
-              onChange={(e) =>
-                table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
-              }
-              className="join-item input input-sm w-[80px] text-center"
-            />
-            <button
-              className="join-item btn btn-sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              »
-            </button>
-          </div>
-        </div>
-      </div>
+      <TablePaginationControls
+        table={table}
+        t={t}
+        globalFilter={globalFilter}
+      />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import ImageUploader from "@/app/_components/ImageUploader";
 import MarkdownEditor from "@/app/_components/MarkdownEditor";
 import TagInput from "@/app/_components/TagInput";
 import InviteUsers from "@/app/_components/InviteUsers";
+import { useTranslations } from "next-intl";
 
 export default function TemplateMetadata({
   title,
@@ -23,10 +24,11 @@ export default function TemplateMetadata({
   setAccessType,
   setSelectedMode,
 }) {
+  const t = useTranslations("builder");
   return (
     <>
       <blockquote className="badge badge-accent badge-outline font-mono">
-        Metadata
+        {t("Metadata")}
       </blockquote>
 
       <input
@@ -50,7 +52,7 @@ export default function TemplateMetadata({
         <div className="flex flex-col gap-2 flex-1 min-w-[340px]">
           <label className="select bg-base-300">
             <select value={topic} onChange={(e) => setTopic(e.target.value)}>
-              <option disabled={true}>Pick a Topic</option>
+              <option disabled={true}>{t("Pick a Topic")}</option>
               <option value="general">General</option>
               <option value="education">Education</option>
               <option value="business">Business</option>
@@ -71,7 +73,9 @@ export default function TemplateMetadata({
 
         <div className="flex flex-col gap-2">
           <fieldset className="fieldset bg-base-100 border-base-300 rounded-box border p-4 w-[240px]">
-            <legend className="fieldset-legend">Visibility Options</legend>
+            <legend className="fieldset-legend">
+              {t("Visibility Options")}
+            </legend>
             <label className="flex items-center gap-2">
               <input
                 type="radio"
@@ -81,7 +85,7 @@ export default function TemplateMetadata({
                 checked={accessType === "public"}
                 onChange={() => setAccessType("public")}
               />
-              Public
+              {t("Public")}
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -92,12 +96,12 @@ export default function TemplateMetadata({
                 checked={accessType === "private"}
                 onChange={() => setAccessType("private")}
               />
-              Private
+              {t("Private")}
             </label>
           </fieldset>
 
           <fieldset className="fieldset bg-base-100 border-base-300 rounded-box border p-4 w-[240px]">
-            <legend className="fieldset-legend">Template Starter</legend>
+            <legend className="fieldset-legend">{t("Template Starter")}</legend>
             <label className="flex items-center gap-2">
               <input
                 type="radio"
@@ -107,7 +111,7 @@ export default function TemplateMetadata({
                 checked={selectedMode === "existing"}
                 onChange={() => setSelectedMode("existing")}
               />
-              Start with Existing Template
+              {t("Start with Existing Template")}
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -118,7 +122,7 @@ export default function TemplateMetadata({
                 checked={selectedMode === "new"}
                 onChange={() => setSelectedMode("new")}
               />
-              Start New
+              {t("Start New")}
             </label>
           </fieldset>
         </div>

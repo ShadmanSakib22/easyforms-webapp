@@ -2,12 +2,14 @@
 import { useState, useEffect } from "react";
 import { fetchEmails } from "@/app/_actions/templateActions";
 import { Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 const Select = dynamic(() => import("react-select"), {
   ssr: false,
 });
 
 export default function InviteUsers({ invitedUsers, setInvitedUsers }) {
+  const t = useTranslations("builder");
   const [allEmails, setAllEmails] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -48,7 +50,7 @@ export default function InviteUsers({ invitedUsers, setInvitedUsers }) {
     <div className="rounded-lg p-2 bg-base-100 border-base-300 border">
       <label className="label text-xs font-medium mb-2 text-base-content flex items-center gap-2">
         <Mail className="text-primary w-[18px] h-[18px]" />
-        Invite Users:
+        {t("invite users")}:
       </label>
       <Select
         isMulti
@@ -56,7 +58,7 @@ export default function InviteUsers({ invitedUsers, setInvitedUsers }) {
         value={invitedUsers.map((email) => ({ value: email, label: email }))}
         onChange={handleChange}
         onInputChange={(value) => setInputValue(value)}
-        placeholder="Start typing to search emails..."
+        placeholder={t("Start typing to search emails")}
         classNamePrefix="react-select"
         classNames={{
           control: () => "bg-base-300! border-none! rounded-sm! text-sm!",
@@ -72,8 +74,8 @@ export default function InviteUsers({ invitedUsers, setInvitedUsers }) {
         }}
         noOptionsMessage={() =>
           inputValue.length < 2
-            ? "Type at least 2 letters"
-            : "No matching emails"
+            ? t("Type at least 2 letters")
+            : t("No matching emails")
         }
       />
     </div>

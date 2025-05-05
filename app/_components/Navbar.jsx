@@ -319,7 +319,7 @@ const Navbar = () => {
       {/* Mobile Side Navigation */}
       <div
         className={`fixed inset-0 bg-base-300 z-[90] transition-opacity duration-300 ${
-          isSideNavOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          isSideNavOpen ? "opacity-60" : "opacity-0 pointer-events-none"
         }`}
         onClick={closeSideNav}
       ></div>

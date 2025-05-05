@@ -1,37 +1,24 @@
-// app/(protected-pages)/adminpanel/users/page.js
 import React from "react";
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs/server";
 import { adminPermissionsCheck } from "@/app/_actions/commonActions";
 import UserTable from "./UserTable";
 import { fetchUsersForAdmin } from "./actions";
+import { useTranslations } from "next-intl";
 
-const page = async () => {
-  await adminPermissionsCheck();
+const AdminContent = ({ userTableData }) => {
+  const t = useTranslations("common");
 
-  const user = await currentUser();
-  const currentUserEmail = user?.emailAddresses[0]?.emailAddress;
-
-  let userTableData;
-  try {
-    userTableData = await fetchUsersForAdmin();
-  } catch (error) {
-    console.error(error);
-    userTableData = [];
-  }
-
-  // --- Render Admin Content ---
   return (
     <div className="container max-w-[1100px] mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("Admin-Panel")}</h1>
 
       {/* Admin-Tabs */}
       <div className="mb-6">
         <ul className="flex gap-2 bg-base-300 rounded-lg p-2">
-          <li className="btn btn-sm w-[6rem] btn-primary">Users</li>
+          <li className="btn btn-sm min-w-[6rem] btn-primary">{t("Users")}</li>
           <Link href="/adminpanel/forms">
-            <li className="btn btn-sm w-[6rem] btn-primary btn-outline">
-              Forms
+            <li className="btn btn-sm min-w-[6rem] btn-primary btn-outline">
+              {t("Forms")}
             </li>
           </Link>
         </ul>
@@ -43,4 +30,18 @@ const page = async () => {
   );
 };
 
-export default page;
+const Page = async () => {
+  await adminPermissionsCheck();
+
+  let userTableData;
+  try {
+    userTableData = await fetchUsersForAdmin();
+  } catch (error) {
+    console.error(error);
+    userTableData = [];
+  }
+
+  return <AdminContent userTableData={userTableData} />;
+};
+
+export default Page;

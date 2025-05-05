@@ -4,6 +4,7 @@ import { ArrowLeft, ScrollText } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 
 export default function TemplateDetails({ template }) {
   const {
@@ -29,18 +30,19 @@ export default function TemplateDetails({ template }) {
     : "N/A";
 
   //   console.log(template);
+  const t = useTranslations("form");
 
   return (
     <div className="container max-w-[1100px] mx-auto mb-[3rem] px-4">
       <div className="mb-4 md:mb-8">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
-          <ArrowLeft size={16} className="mr-1" /> Return to Dashboard
+          <ArrowLeft size={16} className="mr-1" /> {t("Return to Dashboard")}
         </Link>
       </div>
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         <h1 className="subheading-style">
           {" "}
-          <ScrollText /> Template Details
+          <ScrollText /> {t("Template Details")}
         </h1>
 
         {/* Render Title */}
@@ -99,26 +101,27 @@ export default function TemplateDetails({ template }) {
           {topic && (
             <div>
               <h4 className="mt-4 badge border-primary bg-base-300 capitalize font-semibold font-mono text-base-content/90">
-                Topic: <span className="font-normal">{topic}</span>
+                {t("Topic")}: <span className="font-normal">{topic}</span>
               </h4>
               <br />
               <h4 className="mt-4 badge border-primary bg-base-300 capitalize font-semibold font-mono text-base-content/90">
-                Access: <span className="font-normal capitalize">{access}</span>
+                {t("Access")}:{" "}
+                <span className="font-normal capitalize">{access}</span>
               </h4>
               <p className="mt-4 text-sm text-base-content/70">
-                Updated on:{" "}
+                {t("Updated on")}:{" "}
                 <span className="text-primary/90">{updatedDate}</span>
               </p>
               <p className="mt-2 text-sm text-base-content/70">
-                Published on:{" "}
+                {t("Published on")}:{" "}
                 <span className="text-primary/90">{createdDate}</span>
               </p>
               <p className="mt-2 text-sm text-base-content/70">
-                Published by:{" "}
+                {t("Published by")}:{" "}
                 <span className="text-primary/90">{creator.email}</span>
               </p>
               <p className="mt-6 text-sm text-base-content/70">
-                Total Submissions:{" "}
+                {t("Total Submissions")}:{" "}
                 <span className="text-primary/90">{_count.submissions}</span>
               </p>
             </div>
@@ -128,7 +131,9 @@ export default function TemplateDetails({ template }) {
 
       {/* Render Tags */}
       <fieldset className="mt-2 fieldset bg-base-200 border-base-300 rounded-md border p-3 w-full">
-        <legend className="fieldset-legend mb-[-10px]">Tagged By:</legend>
+        <legend className="fieldset-legend mb-[-10px]">
+          {t("Tagged By")}:
+        </legend>
 
         <div className="flex flex-wrap gap-1">
           {/* Render tags */}
@@ -142,13 +147,15 @@ export default function TemplateDetails({ template }) {
               </span>
             ))
           ) : (
-            <span className="text-base-content/50">No tags added</span>
+            <span className="text-base-content/50">{t("No tags added")}</span>
           )}
         </div>
       </fieldset>
       {/* Render invited users */}
       <fieldset className="mt-2 fieldset bg-base-200 border-base-300 rounded-md border p-3 w-full">
-        <legend className="fieldset-legend mb-[-10px]">Invited Users:</legend>
+        <legend className="fieldset-legend mb-[-10px]">
+          {t("Invited Users")}:
+        </legend>
         <div className="flex flex-wrap gap-1">
           {invitedUsers && invitedUsers.length > 0 ? (
             invitedUsers.map((user, index) => (
@@ -160,7 +167,9 @@ export default function TemplateDetails({ template }) {
               </span>
             ))
           ) : (
-            <span className="text-base-content/50">None Invited!</span>
+            <span className="text-base-content/50">
+              {t("No invited users")}
+            </span>
           )}
         </div>
       </fieldset>

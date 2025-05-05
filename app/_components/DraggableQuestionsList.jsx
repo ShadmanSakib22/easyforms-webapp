@@ -68,7 +68,7 @@ export default function DraggableQuestionsList({
               onClick={addQuestion}
               className="btn btn-primary btn-outline"
             >
-              <Plus className="w-4 h-4 mr-1" /> {t("add_question")}
+              <Plus className="w-4 h-4 mr-1" /> {t("add question")}
             </button>
           </div>
         )}

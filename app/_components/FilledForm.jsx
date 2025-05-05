@@ -9,7 +9,9 @@ import { useTranslations } from "next-intl";
 
 const FilledForm = ({ submission, submittedBy, templateId }) => {
   if (!submission) {
-    return <div className="text-center text-error">No submission found.</div>;
+    return (
+      <div className="text-center text-error">{t("no submissions found")}</div>
+    );
   }
 
   const { title, questions, updatedAt } = submission;
@@ -27,14 +29,14 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
           href={`/templates/details/${templateId}`}
           className="btn btn-sm btn-primary btn-outline"
         >
-          <ArrowLeft size={16} className="mr-1" /> {t("return_to_details")}
+          <ArrowLeft size={16} className="mr-1" /> {t("return to details")}
         </Link>
       </div>
 
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         <h1 className="subheading-style">
           {" "}
-          <ListCheck /> {t("form_response")}
+          <ListCheck /> {t("form response")}
         </h1>
 
         <h1 className="text-2xl font-mono font-bold mb-2">
@@ -42,10 +44,10 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
         </h1>
 
         <div className="mb-6 text-base-content/70">
-          {t("submitted_by")}:{" "}
+          {t("submitted by")}:{" "}
           <span className="text-primary/80">{submittedBy}</span>
           <br />
-          {t("date_submitted")}:{" "}
+          {t("date submitted")}:{" "}
           <span className="text-sm text-primary/80">{formattedDateTime}</span>
         </div>
 
@@ -102,7 +104,7 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
             ))
           ) : (
             <p className="text-center text-base-content/70 py-6">
-              {t("no_questions_found")}
+              {t("no questions found")}
             </p>
           )}
         </div>

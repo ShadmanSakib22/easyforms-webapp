@@ -7,11 +7,15 @@ import { CheckCircle } from "lucide-react";
 import { submitTemplateResponse } from "@/app/_actions/templateActions";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 
 const TemplateForm = ({ template, userEmail, userId }) => {
+  const t = useTranslations("form");
   if (!template) {
     return (
-      <div className="text-center text-error">Template data not available.</div>
+      <div className="text-center text-error">
+        {t("Template data not available")}
+      </div>
     );
   }
 
@@ -40,7 +44,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userId) {
-      toast.error("Please login to submit a response.");
+      toast.error(t("Please login to submit a response"));
       return;
     }
 
@@ -54,10 +58,10 @@ const TemplateForm = ({ template, userEmail, userId }) => {
         sendCopy
       );
       if (result.success) {
-        toast.success("Response submitted successfully!");
-      } else toast.error("You already submitted a response!");
+        toast.success(t("Response submitted successfully!"));
+      } else toast.error(t("You already submitted a response!"));
     } catch (error) {
-      toast.error("Failed to submit response");
+      toast.error(t("Failed to submit response"));
     } finally {
       setIsSubmitting(false);
     }
@@ -127,19 +131,19 @@ const TemplateForm = ({ template, userEmail, userId }) => {
           {topic && (
             <div>
               <h4 className="badge border-primary bg-base-300 mt-8 capitalize font-semibold font-mono text-base-content/90">
-                Topic: <span className="font-normal">{topic}</span>
+                {t("Topic")}: <span className="font-normal">{topic}</span>
               </h4>
               <p className="mt-4 text-sm text-base-content/70">
-                Published on:{" "}
+                {t("Published on")}:{" "}
                 <span className="font-semibold">{formattedDate}</span>
               </p>
               <p className="mt-2 text-sm text-base-content/70">
-                Signed in as:{" "}
+                {t("Signed in as")}:{" "}
                 <span className="text-primary">{userEmail || "Guest"}</span>
               </p>
               <fieldset className="mt-4 fieldset bg-base-100 border-base-300 rounded-md border p-3 min-w-[300px] max-w-[600px]">
                 <legend className="fieldset-legend mb-[-10px]">
-                  Tagged By:
+                  {t("Tagged By")}:
                 </legend>
 
                 <div className="flex flex-wrap gap-1">
@@ -154,7 +158,9 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                       </span>
                     ))
                   ) : (
-                    <span className="text-base-content/50">No tags added</span>
+                    <span className="text-base-content/50">
+                      {t("No tags added")}
+                    </span>
                   )}
                 </div>
               </fieldset>
@@ -178,7 +184,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                     </strong>
 
                     <strong className="font-bold text-base-content/70 w-[80%]">
-                      {question.label || "No question text"}
+                      {question.label || t("no question text")}
                       {question.required ? "*" : ""}
                     </strong>
                     <br />
@@ -223,7 +229,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                       onChange={(e) =>
                         handleAnswerChange(question.id, e.target.value)
                       }
-                      placeholder={question.placeholder || "Answer here..."}
+                      placeholder={question.placeholder || t("answer here")}
                       className="input bg-base-300 border-none w-full mt-1 text-sm"
                       required={question.required} // HTML required attribute
                     />
@@ -235,7 +241,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                       onChange={(e) =>
                         handleAnswerChange(question.id, e.target.value)
                       }
-                      placeholder={question.placeholder || "Answer here..."}
+                      placeholder={question.placeholder || t("answer here")}
                       className="textarea bg-base-300 border-none w-full mt-1 text-sm h-24"
                       required={question.required}
                     />
@@ -245,10 +251,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                       type="number"
                       name={`question-${question.id}`}
                       value={answers[question.id] || ""}
-                      placeholder={
-                        question.placeholder ||
-                        "User would enter a number here..."
-                      }
+                      placeholder={question.placeholder || t("answer here")}
                       onChange={(e) =>
                         handleAnswerChange(question.id, e.target.value)
                       }
@@ -259,7 +262,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                   {question.type === "checkbox" && (
                     <div className="mt-2 space-y-2 pl-2">
                       <p className="font-mono text-xs text-base-content/70">
-                        Can Select Multiple:
+                        {t("Can Select Multiple")}:
                       </p>
                       {question.options && question.options.length > 0 ? (
                         question.options.map((opt, optIndex) => (
@@ -288,7 +291,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                         ))
                       ) : (
                         <p className="text-xs text-error italic">
-                          Error: No options defined for this checkbox group.
+                          {t("Error: No options defined")}
                         </p>
                       )}
                     </div>
@@ -296,7 +299,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                   {question.type === "radio-checkbox" && (
                     <div className="mt-2 space-y-2 pl-2">
                       <p className="font-mono text-xs text-base-content/70">
-                        Can Select Only One:
+                        {t("Can Select Only One")}:
                       </p>
                       {question.options && question.options.length > 0 ? (
                         question.options.map((opt, optIndex) => (
@@ -321,7 +324,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                         ))
                       ) : (
                         <p className="text-xs text-error italic">
-                          Error: No options defined for this radio group.
+                          {t("Error: No options defined")}
                         </p>
                       )}
                     </div>
@@ -330,7 +333,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
               ))
             ) : (
               <p className="text-center text-base-content/70 py-6">
-                This form template has no questions yet.
+                {t("no questions found")}
               </p>
             )}
           </div>
@@ -345,7 +348,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                 onChange={(e) => setSendCopy(e.target.checked)}
               />
               <label htmlFor="sendCopy" className="text-sm">
-                Email me a copy of my responses
+                {t("Email me a copy of my responses")}
               </label>
             </div>
             <button
@@ -353,7 +356,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
               className="btn btn-success"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Submit"}{" "}
+              {isSubmitting ? t("Submitting") : t("Submit")}{" "}
               <CheckCircle size={20} />
             </button>
           </div>

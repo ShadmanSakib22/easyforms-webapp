@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
 import { fetchTags } from "@/app/_actions/templateActions";
 import { Tags } from "lucide-react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
 });
 
 export default function TagInput({ tags, setTags }) {
+  const t = useTranslations("builder");
   const [allOptions, setAllOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [debouncedInput] = useDebounce(inputValue, 300);
@@ -41,7 +43,7 @@ export default function TagInput({ tags, setTags }) {
     <div className="rounded-lg p-2 bg-base-100 border-base-300 border">
       <label className="label text-xs font-medium mb-2 text-base-content flex items-center gap-2">
         <Tags className="text-primary w-5 h-5" />
-        Select Tags:
+        {t("Select Tags")}:
       </label>
       <CreatableSelect
         isMulti
@@ -49,7 +51,7 @@ export default function TagInput({ tags, setTags }) {
         value={tags.map((tag) => ({ value: tag, label: tag }))}
         onChange={handleChange}
         onInputChange={setInputValue}
-        placeholder="Add tags here..."
+        placeholder={t("Add tags here")}
         classNamePrefix="react-select"
         classNames={{
           control: () => "bg-base-300! border-none! rounded-sm! text-sm!",
@@ -65,8 +67,8 @@ export default function TagInput({ tags, setTags }) {
         }}
         noOptionsMessage={() =>
           debouncedInput.length < 2
-            ? "Type at least 2 letters"
-            : "No tags found"
+            ? t("Type at least 2 letters")
+            : t("No tags found")
         }
       />
     </div>

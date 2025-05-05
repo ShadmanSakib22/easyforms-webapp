@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Eye, Settings, ArrowLeft, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 import TemplateMetadata from "@/app/_components/TemplateMetadata";
@@ -13,8 +13,11 @@ import {
   fetchTemplateById,
 } from "@/app/_actions/templateActions";
 import UseExistingQuestions from "@/app/_components/UseExistingQuestions";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 export default function TemplateBuilder({ templateId }) {
+  const t = useTranslations("builder");
   const [isLoading, setIsLoading] = useState(false);
   const {
     title,
@@ -112,13 +115,14 @@ export default function TemplateBuilder({ templateId }) {
     try {
       if (templateId) {
         await publishEditedTemplate(templateId, payload);
-        toast.success("Template updated successfully!");
+        toast.success(t("Template updated successfully!"));
       } else {
         await publishTemplate(payload);
-        toast.success("Template published successfully!");
+        toast.success(t("Template published successfully!"));
+        useRouter().push("/dashboard");
       }
     } catch (error) {
-      toast.error("Failed to publish template. Please try again.");
+      toast.error(t("Failed to publish template Please try again"));
     }
   };
 
@@ -126,32 +130,34 @@ export default function TemplateBuilder({ templateId }) {
     <div className="container mx-auto mb-[3rem] px-4 max-w-[1100px]">
       <div className="mb-4 md:mb-8">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
-          <ArrowLeft size={16} className="mr-1" /> Return to Dashboard
+          <ArrowLeft size={16} className="mr-1" /> {t("Return to Dashboard")}
         </Link>
       </div>
 
       <div className="mb-8 p-8 bg-base-200 border border-base-300 rounded-lg shadow-lg">
         <h1 className="subheading-style">
           <Settings />
-          Template Builder
+          {t("Template Builder")}
         </h1>
 
         <p className="subtitle-style">
-          Effortlessly build Forms/Surveys/Quizzes/Polls with{" "}
-          <span className="text-primary font-semibold">ezForms</span> Template
-          Builder. <br />
-          Add infinite number of questions with markdown supporting fields.
+          {t("Effortlessly build Forms/Surveys/Quizzes/Polls with")}{" "}
+          <span className="text-primary font-semibold">ezForms</span>{" "}
+          {t("Template Builder")}. <br />
+          {t(
+            "Add infinite number of questions with markdown supporting fields"
+          )}
         </p>
 
         <p className="subtitle-style">
-          Check out the following resources for assistance:
+          {t("Check out the following resources for assistance")}:
           <br />
           <a
             href="#"
             target="_blank"
             className="font-mono text-xs link link-hover py-1"
           >
-            1. Video demonstration
+            1. {t("Video demonstration")}
           </a>
           <br />
           <a
@@ -159,12 +165,12 @@ export default function TemplateBuilder({ templateId }) {
             target="_blank"
             className="font-mono text-xs link link-hover"
           >
-            2. Markdown support
+            2. {t("Markdown Documentation")}
           </a>
         </p>
 
         <i className="text-sm">
-          Do not have more than one instance of Template Builder Open!
+          {t("Do not have more than one instance of Template Builder Open!")}
         </i>
       </div>
 
@@ -192,7 +198,7 @@ export default function TemplateBuilder({ templateId }) {
           {selectedMode === "existing" ? <UseExistingQuestions /> : null}
           <div className="mt-[3rem] pt-4 border-t-2 border-dashed border-primary">
             <blockquote className="badge badge-accent badge-outline font-mono mb-4">
-              Questions
+              {t("Questions")}
             </blockquote>
 
             <DraggableQuestionsList
@@ -211,11 +217,11 @@ export default function TemplateBuilder({ templateId }) {
           <div className="flex justify-end gap-3 mt-6">
             <Link href="/templates/preview">
               <button className="btn btn-primary">
-                Preview <Eye className="w-4 h-4" />
+                {t("Preview")} <Eye className="w-4 h-4" />
               </button>
             </Link>
             <button className="btn btn-success" onClick={handlePublish}>
-              Publish <Upload className="w-4 h-4" />
+              {t("Publish")} <Upload className="w-4 h-4" />
             </button>
           </div>
         </div>

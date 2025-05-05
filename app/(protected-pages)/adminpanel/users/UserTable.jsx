@@ -14,13 +14,10 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   getPaginationRowModel,
-  flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
 import {
   Search,
-  ChevronDown,
-  ChevronUp,
   Ban,
   LockKeyholeIcon,
   LockKeyholeOpen,
@@ -36,119 +33,13 @@ import {
   setMember,
 } from "./actions";
 import { toast } from "react-hot-toast";
-
-// --- Status/Role Styling Maps ---
-const statusBadgeMap = {
-  active: "badge-success",
-  locked: "badge-error",
-};
-const roleBadgeMap = {
-  admin: "badge-secondary",
-  member: "badge-primary",
-};
-
-// --- TanStack Table Column Definition ---
-const columnHelper = createColumnHelper();
-const columns = [
-  // Select Column
-  columnHelper.display({
-    id: "select",
-    header: ({ table }) => (
-      <label>
-        <input
-          type="checkbox"
-          className="checkbox checkbox-primary checkbox-sm"
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected()
-              ? "indeterminate"
-              : undefined, // Handle intermediate state
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      </label>
-    ),
-    cell: ({ row }) => (
-      <label>
-        <input
-          type="checkbox"
-          className="checkbox checkbox-primary checkbox-sm"
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected()
-              ? "indeterminate"
-              : undefined,
-            onChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </label>
-    ),
-    // Disable sorting/filtering for select column
-    enableSorting: false,
-    enableColumnFilter: false,
-  }),
-  // Data Columns
-  columnHelper.accessor("email", {
-    header: "Email",
-    cell: (info) => <span className="text-sm">{info.getValue()}</span>,
-    enableSorting: true,
-  }),
-  columnHelper.accessor("role", {
-    header: "Role",
-    cell: (info) => (
-      <span
-        className={`badge ${
-          roleBadgeMap[info.getValue()] || "badge-ghost"
-        } badge-sm w-[70px]`}
-      >
-        {info.getValue()}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    cell: (info) => (
-      <span
-        className={`badge ${
-          statusBadgeMap[info.getValue()] || "badge-ghost"
-        } badge-sm w-[70px]`}
-      >
-        {info.getValue()}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("createdAt", {
-    header: "Created At",
-    cell: (info) => (
-      <span className="text-sm">
-        {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("updatedAt", {
-    header: "Updated At",
-    cell: (info) => (
-      <span className="text-sm">
-        {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
-      </span>
-    ),
-    enableSorting: true,
-  }),
-  columnHelper.accessor("clerkId", {
-    header: "Clerk ID",
-    cell: (info) => (
-      <span className="font-mono text-xs">{info.getValue()}</span>
-    ),
-    enableSorting: false,
-  }),
-];
+import TableBodyView from "@/app/_components/TableBodyView";
+import TablePaginationControls from "@/app/_components/TablePaginationControls";
+import { useTranslations } from "next-intl";
 
 // --- The Main Component ---
 const UserTable = ({ initialUsers }) => {
+  const t = useTranslations("table");
   const [data, setData] = useState(initialUsers); // setData for realtime updates
   const [sorting, setSorting] = useState([{ id: "createdAt", desc: true }]); // Initial sort state
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
@@ -157,6 +48,116 @@ const UserTable = ({ initialUsers }) => {
 
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
+
+  // --- Status/Role Styling Maps ---
+  const statusBadgeMap = {
+    active: "badge-success",
+    locked: "badge-error",
+  };
+  const roleBadgeMap = {
+    admin: "badge-secondary",
+    member: "badge-primary",
+  };
+
+  // --- TanStack Table Column Definition ---
+  const columnHelper = createColumnHelper();
+  const columns = [
+    // Select Column
+    columnHelper.display({
+      id: "select",
+      header: ({ table }) => (
+        <label>
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary checkbox-sm"
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected()
+                ? "indeterminate"
+                : undefined, // Handle intermediate state
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        </label>
+      ),
+      cell: ({ row }) => (
+        <label>
+          <input
+            type="checkbox"
+            className="checkbox checkbox-primary checkbox-sm"
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected()
+                ? "indeterminate"
+                : undefined,
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        </label>
+      ),
+      // Disable sorting/filtering for select column
+      enableSorting: false,
+      enableColumnFilter: false,
+    }),
+    // Data Columns
+    columnHelper.accessor("email", {
+      header: t("Email"),
+      cell: (info) => <span className="text-sm">{info.getValue()}</span>,
+      enableSorting: true,
+    }),
+    columnHelper.accessor("role", {
+      header: t("Role"),
+      cell: (info) => (
+        <span
+          className={`badge ${
+            roleBadgeMap[info.getValue()] || "badge-ghost"
+          } badge-sm w-[70px]`}
+        >
+          {info.getValue()}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("status", {
+      header: t("Status"),
+      cell: (info) => (
+        <span
+          className={`badge ${
+            statusBadgeMap[info.getValue()] || "badge-ghost"
+          } badge-sm w-[70px]`}
+        >
+          {info.getValue()}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("createdAt", {
+      header: t("Created At"),
+      cell: (info) => (
+        <span className="text-sm">
+          {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("updatedAt", {
+      header: t("Updated At"),
+      cell: (info) => (
+        <span className="text-sm">
+          {info.getValue() ? format(new Date(info.getValue()), "P p") : "N/A"}
+        </span>
+      ),
+      enableSorting: true,
+    }),
+    columnHelper.accessor("clerkId", {
+      header: t("Clerk ID"),
+      cell: (info) => (
+        <span className="font-mono text-xs">{info.getValue()}</span>
+      ),
+      enableSorting: false,
+    }),
+  ];
 
   const table = useReactTable({
     data: memoizedData,
@@ -212,13 +213,13 @@ const UserTable = ({ initialUsers }) => {
 
   const handleLock = useCallback(() => {
     executeAction(lockUsers, getSelectedClerkIds(), {
-      loading: "Locking user(s)...",
+      loading: t("Locking user(s)"),
     });
   }, [getSelectedClerkIds, executeAction]);
 
   const handleUnlock = useCallback(() => {
     executeAction(unlockUsers, getSelectedClerkIds(), {
-      loading: "Unlocking user(s)...",
+      loading: t("Unlocking user(s)"),
     });
   }, [getSelectedClerkIds, executeAction]);
 
@@ -226,27 +227,24 @@ const UserTable = ({ initialUsers }) => {
     const idsToDelete = getSelectedClerkIds();
     if (idsToDelete.length === 0) return;
     executeAction(deleteUsers, idsToDelete, {
-      loading: "Deleting user(s)...",
+      loading: t("Deleting user(s)"),
     });
   }, [getSelectedClerkIds, executeAction]);
 
   const handleSetAdmin = useCallback(() => {
     executeAction(setAdmin, getSelectedClerkIds(), {
-      loading: "Promoting to admin(s)...",
+      loading: t("Promoting to admin(s)"),
     });
   }, [getSelectedClerkIds, executeAction]);
 
   const handleSetMember = useCallback(() => {
     executeAction(setMember, getSelectedClerkIds(), {
-      loading: "Demoting Admin(s)...",
+      loading: t("Demoting to user(s)"),
     });
   }, [getSelectedClerkIds, executeAction]);
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
-  const currentPage = table.getState().pagination.pageIndex + 1; // Tanstack is 0-based
-  const pageCount = table.getPageCount();
-  const currentRowsPerPage = table.getState().pagination.pageSize;
 
   // UseEffect for real-time db updates
   useEffect(() => {
@@ -311,7 +309,7 @@ const UserTable = ({ initialUsers }) => {
     <>
       <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
         <h1 className="badge badge-accent badge-outline font-mono mb-4 ">
-          Users List
+          {t("Users List")}
         </h1>
         {/* Top Controls: Search and Actions */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-4 bg-base-100 border border-base-300 rounded-lg">
@@ -340,7 +338,7 @@ const UserTable = ({ initialUsers }) => {
               ) : (
                 <Shield className="w-4 h-4" />
               )}
-              Promote ({selectedRowCount})
+              {t("Promote")} ({selectedRowCount})
             </button>
             <button
               className={`btn btn-warning btn-sm ${
@@ -354,7 +352,7 @@ const UserTable = ({ initialUsers }) => {
               ) : (
                 <ShieldOff className="w-4 h-4" />
               )}
-              Demote ({selectedRowCount})
+              {t("Demote")} ({selectedRowCount})
             </button>
             <button
               className={`btn btn-success btn-sm ${
@@ -368,7 +366,7 @@ const UserTable = ({ initialUsers }) => {
               ) : (
                 <LockKeyholeOpen className="w-4 h-4" />
               )}
-              Unlock ({selectedRowCount})
+              {t("Unlock")} ({selectedRowCount})
             </button>
             <button
               className={`btn btn-warning btn-sm ${
@@ -382,7 +380,7 @@ const UserTable = ({ initialUsers }) => {
               ) : (
                 <LockKeyholeIcon className="w-4 h-4" />
               )}
-              Lock ({selectedRowCount})
+              {t("Lock")} ({selectedRowCount})
             </button>
             <button
               className={`btn btn-error btn-sm ${
@@ -396,141 +394,23 @@ const UserTable = ({ initialUsers }) => {
               ) : (
                 <Ban className="w-4 h-4" />
               )}
-              Delete ({selectedRowCount})
+              {t("delete")} ({selectedRowCount})
             </button>
           </div>
         </div>
 
-        {/* Table Container */}
-        <div className="overflow-x-auto border border-base-300 rounded-lg">
-          <table className="table table-pin-rows w-full">
-            {/* Head */}
-            <thead className="bg-base-200">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder ? null : (
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? "cursor-pointer select-none flex items-center gap-1"
-                              : "flex items-center gap-1",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {/* Render Sort Icons */}
-                          {{
-                            asc: <ChevronUp className="w-4 h-4" />,
-                            desc: <ChevronDown className="w-4 h-4" />,
-                          }[header.column.getIsSorted()] ?? null}
-                        </div>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
+        <TableBodyView
+          table={table}
+          t={t}
+          globalFilter={globalFilter}
+          columns={columns}
+        />
 
-            {/* Body */}
-            <tbody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className={`hover:bg-primary/10 ${
-                      row.getIsSelected() ? "bg-primary/20" : ""
-                    }`}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  {/* Use column count from header */}
-                  <td
-                    colSpan={
-                      table.getHeaderGroups()[0]?.headers.length ||
-                      columns.length
-                    }
-                    className="text-center p-4"
-                  >
-                    No Data found
-                    {globalFilter ? ` matching "${globalFilter}"` : ""}.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Bottom Controls: Pagination and Rows Per Page */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 py-2">
-          {/* Rows Per Page Selector */}
-          <div className="text-sm text-base-content/70">
-            <label className="flex items-center gap-2 text-nowrap">
-              Rows per page:
-              <select
-                className="select select-bordered select-xs"
-                value={currentRowsPerPage}
-                onChange={(e) => {
-                  table.setPageSize(Number(e.target.value));
-                }}
-              >
-                {[5, 10, 15, 20, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          {/* Pagination Info and Controls */}
-          <div className="text-center flex flex-wrap items-center gap-4">
-            <span className="text-sm text-base-content/70">
-              Page {currentPage} of {pageCount} (
-              {table.getFilteredRowModel().rows.length} total templates
-              {globalFilter ? " matching filter" : ""})
-            </span>
-            <div className="join">
-              <button
-                className="join-item btn btn-sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                «
-              </button>
-              {/* Page number input */}
-              <input
-                type="number"
-                value={currentPage}
-                onChange={(e) =>
-                  table.setPageIndex(Math.max(0, Number(e.target.value) - 1))
-                }
-                className="join-item input input-sm w-[80px] text-center"
-              />
-              <button
-                className="join-item btn btn-sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                »
-              </button>
-            </div>
-          </div>
-        </div>
+        <TablePaginationControls
+          table={table}
+          t={t}
+          globalFilter={globalFilter}
+        />
       </div>
     </>
   );
