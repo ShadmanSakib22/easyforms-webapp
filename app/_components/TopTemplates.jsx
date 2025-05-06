@@ -25,17 +25,18 @@ const TopTemplatesDisplay = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {templates.map((template) => (
           <div key={template.id} className="card bg-base-200 shadow-xl">
-            {template.thumbnailUrl && (
-              <figure>
-                <img
-                  src={template.thumbnailUrl}
-                  alt={template.title}
-                  className="h-48 w-full object-cover"
-                />
-              </figure>
-            )}
+            <figure>
+              <img
+                src={
+                  template.thumbnailUrl ||
+                  "https://th.bing.com/th/id/OIP.90sDWdblfZFiciIEpsGFwwHaEY?cb=iwp1&rs=1&pid=ImgDetMain"
+                }
+                alt={template.title}
+                className="h-48 w-full object-cover"
+              />
+            </figure>
 
-            <div className="card-body bg-base-100 rounded-2xl">
+            <div className="card-body bg-base-100">
               <h3 className="card-title text-lg">{template.title}</h3>
               <div className="badge badge-primary">{template.topic}</div>
               <p className="text-sm">Created by: {template.creator.email}</p>
