@@ -184,11 +184,11 @@ const InvitesTable = ({ invitesList }) => {
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
-  let selectedId = getSelectedIds()[0];
-
-  // Route to selected invite
+  let selectedId = Object.keys(rowSelection)[0];
   let selectedInvite = memoizedData.find((invite) => invite.id === selectedId);
-  let templatePath = `/templates/${selectedInvite.template.id}`;
+  let templatePath = selectedInvite?.template?.id
+    ? `/templates/${selectedInvite.template.id}`
+    : "#";
 
   return (
     <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
