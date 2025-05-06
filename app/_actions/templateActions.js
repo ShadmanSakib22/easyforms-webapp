@@ -683,3 +683,40 @@ export async function searchTemplates(searchQuery) {
     return [];
   }
 }
+
+export async function fetchTopTemplates() {
+  try {
+    const topTemplates = await prisma.template.findMany({
+      where: {
+        access: "public",
+      },
+      select: {
+        id: true,
+        title: true,
+        topic: true,
+        thumbnailUrl: true,
+        _count: {
+          select: {
+            submissions: true,
+          },
+        },
+        creator: {
+          select: {
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        submissions: {
+          _count: "desc",
+        },
+      },
+      take: 3,
+    });
+
+    return topTemplates;
+  } catch (error) {
+    console.error("Error fetching top templates:", error);
+    return [];
+  }
+}
