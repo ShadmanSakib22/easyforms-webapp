@@ -63,7 +63,7 @@ const FilledForm = ({ submission, submittedBy, templateId }) => {
                     Q{index + 1}:
                   </strong>
                   <strong className="font-bold text-base-content/70 w-[80%]">
-                    {question.label}
+                    {question.label || t("no question text")}
                   </strong>
                   <div
                     className="prose prose-xs max-w-none text-base-content"

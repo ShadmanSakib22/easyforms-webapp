@@ -1,6 +1,7 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 
-const TablePaginationControls = ({ table, t, globalFilter }) => {
+const TablePaginationControls = ({ table, globalFilter }) => {
   // Get pagination state from table instance
   const { pageIndex, pageSize } = table.getState().pagination;
   const pageCount = table.getPageCount();
@@ -8,6 +9,8 @@ const TablePaginationControls = ({ table, t, globalFilter }) => {
 
   const currentPage = pageIndex + 1;
   const currentRowsPerPage = pageSize;
+
+  const t = useTranslations("table");
 
   return (
     // {/* Pagination and Rows Per Page */}

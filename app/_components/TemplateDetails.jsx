@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 
-export default function TemplateDetails({ template }) {
+export default function TemplateDetails({ template, templateId }) {
   const {
     title,
     description,
@@ -34,10 +34,26 @@ export default function TemplateDetails({ template }) {
 
   return (
     <div className="container max-w-[1100px] mx-auto mb-[3rem] px-4">
-      <div className="mb-4 md:mb-8">
+      <div className="mb-4 md:mb-8 flex gap-2 items-center justify-between">
         <Link href="/dashboard" className="btn btn-sm btn-primary btn-outline">
           <ArrowLeft size={16} className="mr-1" /> {t("Return to Dashboard")}
         </Link>
+        <div className="flex gap-2">
+          {/* Edit Button */}
+          <Link
+            href={`/templates/edit/${templateId}`}
+            className="btn btn-sm btn-warning min-w-[5rem]"
+          >
+            {t("Edit")}
+          </Link>
+          {/* Analyze Button */}
+          <Link
+            href={`/templates/analyze/${templateId}/`}
+            className="btn btn-sm btn-info min-w-[5rem]"
+          >
+            {t("Analyze")}
+          </Link>
+        </div>
       </div>
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
         <h1 className="subheading-style">

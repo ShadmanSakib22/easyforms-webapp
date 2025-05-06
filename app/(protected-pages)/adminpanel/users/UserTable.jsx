@@ -341,7 +341,7 @@ const UserTable = ({ initialUsers }) => {
               {t("Promote")} ({selectedRowCount})
             </button>
             <button
-              className={`btn btn-warning btn-sm ${
+              className={`btn btn-primary btn-sm ${
                 isPending ? "opacity-50 cursor-not-allowed" : ""
               }`}
               onClick={handleSetMember}
@@ -401,16 +401,11 @@ const UserTable = ({ initialUsers }) => {
 
         <TableBodyView
           table={table}
-          t={t}
           globalFilter={globalFilter}
           columns={columns}
         />
 
-        <TablePaginationControls
-          table={table}
-          t={t}
-          globalFilter={globalFilter}
-        />
+        <TablePaginationControls table={table} globalFilter={globalFilter} />
       </div>
     </>
   );

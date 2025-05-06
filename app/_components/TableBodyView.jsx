@@ -1,8 +1,10 @@
 import React from "react";
 import { flexRender } from "@tanstack/react-table";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-const TableBodyView = ({ table, t, globalFilter, columns }) => {
+const TableBodyView = ({ table, globalFilter, columns }) => {
+  const t = useTranslations("table");
   return (
     // {/* Table Container */}
     <div className="overflow-x-auto border border-base-300 rounded-lg">

@@ -17,6 +17,23 @@
   "footer": {
     "copyright": "© 2025 ezForms. Todos los derechos reservados."
   },
+  "common": {
+    "Search Results": "Resultados de búsqueda",
+    "Query found in following templates": "Consulta encontrada en las siguientes plantillas",
+    "No results found": "No se encontraron resultados.",
+    "Your Account is Locked!": "¡Tu cuenta está bloqueada!",
+    "You have limited access to the site": "Tienes acceso limitado al sitio",
+    "Contact support for assistance": "Contacta a soporte para asistencia",
+    "Access Forbidden - 403": "Acceso prohibido - 403",
+    "You do not have permission to access this page": "No tienes permiso para acceder a esta página",
+    "Page Not Found - 404": "Página no encontrada - 404",
+    "No page found at this location": "No se encontró ninguna página en esta ubicación",
+    "Dashboard": "Panel de control",
+    "Admin-Panel": "Panel de administración",
+    "Create Form": "Crear formulario",
+    "Users": "Usuarios",
+    "Forms": "Formularios"
+  },
   "builder": {
     "Metadata": "Metadatos",
     "Pick a Topic": "Seleccionar un tema",
@@ -77,7 +94,7 @@
     "answer": "Respuesta",
     "answer here": "Responde aquí...",
     "no question text": "Sin texto de pregunta",
-    "no questions found": "No se encontraron preguntas en este envío.",
+    "no questions found": "No se encontraron preguntas",
     "no submission found": "No se encontró ningún envío.",
     "Template Details": "Detalles de la plantilla",
     "Topic": "Tema",
@@ -102,7 +119,9 @@
     "Error: No options defined": "Error: No hay opciones definidas.",
     "This form template has no questions yet": "Esta plantilla de formulario aún no tiene preguntas.",
     "Submit": "Enviar",
-    "Submiting": "Enviando..."
+    "Submitting": "Enviando...",
+    "Edit": "Editar",
+    "Analyze": "Analizar"
   },
   "table": {
     "template id": "ID de plantilla",
@@ -147,21 +166,16 @@
     "Promoting to admin(s)": "Promoviendo a admin(s)...",
     "Demoting to user(s)": "Degradando a usuario(s)..."
   },
-  "common": {
-    "Search Results": "Resultados de búsqueda",
-    "Query found in following templates": "Consulta encontrada en las siguientes plantillas",
-    "No results found": "No se encontraron resultados.",
-    "Your Account is Locked!": "¡Tu cuenta está bloqueada!",
-    "You have limited access to the site": "Tienes acceso limitado al sitio",
-    "Contact support for assistance": "Contacta a soporte para asistencia",
-    "Access Forbidden - 403": "Acceso prohibido - 403",
-    "You do not have permission to access this page": "No tienes permiso para acceder a esta página",
-    "Page Not Found - 404": "Página no encontrada - 404",
-    "No page found at this location": "No se encontró ninguna página en esta ubicación",
-    "Dashboard": "Panel de control",
-    "Admin-Panel": "Panel de administración",
-    "Create Form": "Crear formulario",
-    "Users": "Usuarios",
-    "Forms": "Formularios"
+  "analysis": {
+    "analysis": "Análisis",
+    "return to details": "Volver a detalles",
+    "question": "Pregunta",
+    "answer": "Respuesta",
+    "answered by": "Respondido por",
+    "date submitted": "Fecha de envío",
+    "total responses": "Total de respuestas",
+    "search": "Buscar respuesta",
+    "no data": "No hay datos.",
+    "no question text": "Sin texto de pregunta."
   }
 }

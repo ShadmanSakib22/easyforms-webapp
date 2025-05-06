@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import {
@@ -25,7 +25,6 @@ const SubmissionTable = ({ submissionList, templateId }) => {
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
   const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'userId1': true, 'userId2': true }
   const [isPending, startTransition] = useTransition(); // Toolbar Button States
-  const router = useRouter();
 
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
@@ -151,22 +150,20 @@ const SubmissionTable = ({ submissionList, templateId }) => {
     });
   }, []);
 
-  const handleView = useCallback(() => {
-    const userId = getSelectedUserIds();
-    if (userId.length != 1) return;
-    router.push(`/templates/details/${templateId}/${userId}`);
-  }, [getSelectedUserIds, templateId]);
-
   const handleDeleteSubmisson = useCallback(() => {
     const idsToDelete = getSelectedUserIds();
     if (idsToDelete.length === 0) return;
     executeAction(deleteSubmissions, idsToDelete, {
-      loading: t("delete submissions"),
+      loading: t("deleting submissions"),
     });
   }, [getSelectedUserIds, executeAction]);
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
+  let selectedId = getSelectedUserIds()[0];
+
+  // View Path
+  let viewPath = `/templates/details/${templateId}/${selectedId}`;
 
   return (
     <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md">
@@ -188,20 +185,16 @@ const SubmissionTable = ({ submissionList, templateId }) => {
           </label>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
+          <Link
+            href={viewPath}
             className={`btn btn-success btn-sm min-w-[110px] ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
+              selectedRowCount !== 1 ? " pointer-events-none" : ""
             }`}
-            onClick={handleView}
-            disabled={selectedRowCount !== 1 || isPending}
+            disabled={selectedRowCount !== 1}
           >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <Eye className="w-4 h-4" />
-            )}
+            <Eye className="w-4 h-4" />
             {t("view")}
-          </button>
+          </Link>
           <button
             className={`btn btn-error btn-sm min-w-[110px] ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
@@ -221,16 +214,11 @@ const SubmissionTable = ({ submissionList, templateId }) => {
 
       <TableBodyView
         table={table}
-        t={t}
         globalFilter={globalFilter}
         columns={columns}
       />
 
-      <TablePaginationControls
-        table={table}
-        t={t}
-        globalFilter={globalFilter}
-      />
+      <TablePaginationControls table={table} globalFilter={globalFilter} />
     </div>
   );
 };

@@ -17,6 +17,23 @@
   "footer": {
     "copyright": "© 2025 ezForms. All rights reserved."
   },
+  "common": {
+    "Search Results": "Search Results",
+    "Query found in following templates": "Query found in following templates",
+    "No results found": "No results found.",
+    "Your Account is Locked!": "Your Account is Locked!",
+    "You have limited access to the site": "You have limited access to the site",
+    "Contact support for assistance": "Contact support for assistance",
+    "Access Forbidden - 403": "Access Forbidden - 403",
+    "You do not have permission to access this page": "You do not have permission to access this page",
+    "Page Not Found - 404": "Page Not Found - 404",
+    "No page found at this location": "No page found at this location",
+    "Dashboard": "Dashboard",
+    "Admin-Panel": "Admin-Panel",
+    "Create Form": "Create Form",
+    "Users": "Users",
+    "Forms": "Forms"
+  },
   "builder": {
     "Metadata": "Metadata",
     "Pick a Topic": "Pick a Topic",
@@ -77,7 +94,7 @@
     "answer": "Answer",
     "answer here": "Answer here...",
     "no question text": "No question text",
-    "no questions found": "No questions found in this submission.",
+    "no questions found": "No question found",
     "no submission found": "No submission found.",
     "Template Details": "Template Details",
     "Topic": "Topic",
@@ -102,7 +119,9 @@
     "Error: No options defined": "Error: No options defined.",
     "This form template has no questions yet": "This form template has no questions yet.",
     "Submit": "Submit",
-    "Submiting": "Submitting..."
+    "Submitting": "Submitting...",
+    "Edit": "Edit",
+    "Analyze": "Analyze"
   },
   "table": {
     "template id": "Template ID",
@@ -147,21 +166,16 @@
     "Promoting to admin(s)": "Promoting to admin(s)...",
     "Demoting to user(s)": "Demoting to user(s)..."
   },
-  "common": {
-    "Search Results": "Search Results",
-    "Query found in following templates": "Query found in following templates",
-    "No results found": "No results found.",
-    "Your Account is Locked!": "Your Account is Locked!",
-    "You have limited access to the site": "You have limited access to the site",
-    "Contact support for assistance": "Contact support for assistance",
-    "Access Forbidden - 403": "Access Forbidden - 403",
-    "You do not have permission to access this page": "You do not have permission to access this page",
-    "Page Not Found - 404": "Page Not Found - 404",
-    "No page found at this location": "No page found at this location",
-    "Dashboard": "Dashboard",
-    "Admin-Panel": "Admin-Panel",
-    "Create Form": "Create Form",
-    "Users": "Users",
-    "Forms": "Forms"
+  "analysis": {
+    "analysis": "Response Analysis",
+    "return to details": "Return to Details",
+    "question": "Question",
+    "answer": "Answer",
+    "answered by": "Answered by",
+    "date submitted": "Date Submitted",
+    "total responses": "Total Responses",
+    "search": "Search answers...",
+    "no data": "No data.",
+    "no question text": "No question text."
   }
 }

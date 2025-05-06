@@ -30,7 +30,7 @@ const page = async ({ params }) => {
 
   return (
     <div>
-      <TemplateDetails template={template} />
+      <TemplateDetails template={template} templateId={templateId} />
       <SubmissionTable
         submissionList={submissionList}
         templateId={templateId}

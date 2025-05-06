@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import {
@@ -25,7 +25,6 @@ const TemplatesTable = ({ templatesList }) => {
   const [globalFilter, setGlobalFilter] = useState(""); // Search Box
   const [rowSelection, setRowSelection] = useState({}); // Row Selection { 'id1': true, 'id2': true }
   const [isPending, startTransition] = useTransition(); // Toolbar Button States
-  const router = useRouter();
 
   // Memoize data to prevent unnecessary re-renders
   const memoizedData = useMemo(() => data, [data]);
@@ -174,24 +173,6 @@ const TemplatesTable = ({ templatesList }) => {
     });
   }, []);
 
-  const handleView = useCallback(() => {
-    const id = getSelectedIds();
-    if (id.length != 1) return;
-    router.push(`/templates/${id}`);
-  }, [getSelectedIds]);
-
-  const handleViewDetails = useCallback(() => {
-    const id = getSelectedIds();
-    if (id.length != 1) return;
-    router.push(`/templates/details/${id}`);
-  }, [getSelectedIds]);
-
-  const handleEdit = useCallback(() => {
-    const id = getSelectedIds();
-    if (id.length != 1) return;
-    router.push(`/templates/edit/${id}`);
-  }, [getSelectedIds]);
-
   const handleDeleteTemplate = useCallback(() => {
     const idsToDelete = getSelectedIds();
     if (idsToDelete.length === 0) return;
@@ -202,6 +183,12 @@ const TemplatesTable = ({ templatesList }) => {
 
   // Derived state for convenience
   const selectedRowCount = Object.keys(rowSelection).length;
+  let selectedId = getSelectedIds()[0];
+
+  // Paths for navigation
+  const viewPath = `/templates/${selectedId}`;
+  const viewDetailsPath = `/templates/details/${selectedId}`;
+  const editPath = `/templates/edit/${selectedId}`;
 
   return (
     <div className="container max-w-[1080px] mx-auto mb-[3rem] bg-base-200 border border-base-300 p-4 rounded-md mt-[2rem]">
@@ -223,48 +210,36 @@ const TemplatesTable = ({ templatesList }) => {
           </label>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
+          <Link
+            href={viewPath}
             className={`btn btn-success btn-sm min-w-[110px] ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
+              selectedRowCount !== 1 ? " pointer-events-none" : ""
             }`}
-            onClick={handleView}
-            disabled={selectedRowCount !== 1 || isPending}
+            disabled={selectedRowCount !== 1}
           >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <Eye className="w-4 h-4" />
-            )}
+            <Eye className="w-4 h-4" />
             {t("view")}
-          </button>
-          <button
-            className={`btn btn-success btn-sm min-w-[110px] ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
+          </Link>
+          <Link
+            href={viewDetailsPath}
+            className={`btn btn-info btn-sm min-w-[110px] ${
+              selectedRowCount !== 1 ? " pointer-events-none" : ""
             }`}
-            onClick={handleViewDetails}
-            disabled={selectedRowCount !== 1 || isPending}
+            disabled={selectedRowCount !== 1}
           >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <ScrollText className="w-4 h-4" />
-            )}
+            <ScrollText className="w-4 h-4" />
             {t("details")}
-          </button>
-          <button
+          </Link>
+          <Link
+            href={editPath}
             className={`btn btn-warning btn-sm min-w-[110px] ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
+              selectedRowCount !== 1 ? " pointer-events-none" : ""
             }`}
-            onClick={handleEdit}
-            disabled={selectedRowCount !== 1 || isPending}
+            disabled={selectedRowCount !== 1}
           >
-            {isPending ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <Cog className="w-4 h-4" />
-            )}
+            <Cog className="w-4 h-4" />
             {t("edit")}
-          </button>
+          </Link>
           <button
             className={`btn btn-error btn-sm min-w-[110px] ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
@@ -284,16 +259,11 @@ const TemplatesTable = ({ templatesList }) => {
 
       <TableBodyView
         table={table}
-        t={t}
         globalFilter={globalFilter}
         columns={columns}
       />
 
-      <TablePaginationControls
-        table={table}
-        t={t}
-        globalFilter={globalFilter}
-      />
+      <TablePaginationControls table={table} globalFilter={globalFilter} />
     </div>
   );
 };

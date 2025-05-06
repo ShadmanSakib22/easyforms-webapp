@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 
 export default function TemplateBuilder({ templateId }) {
   const t = useTranslations("builder");
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
     title,
@@ -117,9 +118,10 @@ export default function TemplateBuilder({ templateId }) {
         await publishEditedTemplate(templateId, payload);
         toast.success(t("Template updated successfully!"));
       } else {
-        await publishTemplate(payload);
-        toast.success(t("Template published successfully!"));
-        useRouter().push("/dashboard");
+        if (await publishTemplate(payload)) {
+          toast.success(t("Template published successfully!"));
+          router.push("/dashboard");
+        }
       }
     } catch (error) {
       toast.error(t("Failed to publish template Please try again"));

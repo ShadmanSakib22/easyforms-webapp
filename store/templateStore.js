@@ -4,8 +4,8 @@ let questionIdCounter = 0;
 let optionIdCounter = 0;
 
 export const useTemplateStore = create((set) => ({
-  title: "",
-  description: "",
+  title: "Untitled Form",
+  description: "No description provided.",
   topic: "general",
   tags: [],
   thumbnailUrl: "",

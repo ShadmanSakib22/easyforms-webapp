@@ -72,6 +72,8 @@ const TemplateForm = ({ template, userEmail, userId }) => {
     ? format(new Date(updatedAt), "d MMMM yyyy - h:mm aaa")
     : "N/A";
 
+  const hasQuestions = questions && questions.length > 0;
+
   return (
     <div className="container max-w-[1024px] mx-auto mb-[3rem] px-4">
       <article className="p-6 md:p-8 border border-base-300 rounded-xl bg-base-200">
@@ -332,7 +334,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
                 </div>
               ))
             ) : (
-              <p className="text-center text-base-content/70 py-6">
+              <p className="text-center text-base-content/70 py-6 font-mono text-sm capitalize">
                 {t("no questions found")}
               </p>
             )}
@@ -354,7 +356,7 @@ const TemplateForm = ({ template, userEmail, userId }) => {
             <button
               type="submit"
               className="btn btn-success"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !hasQuestions}
             >
               {isSubmitting ? t("Submitting") : t("Submit")}{" "}
               <CheckCircle size={20} />
