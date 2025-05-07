@@ -1,20 +1,12 @@
 import TopTemplatesDisplay from "./_components/TopTemplates";
+import { fetchTopTemplates } from "@/app/_actions/templateActions";
 
-export default function Home() {
+export default async function Home() {
+  const templates = await fetchTopTemplates();
   return (
     <>
       <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-2xl font-bold text-warning">Hey!</h1>
-        <p className="font-mono pb-[5rem]">Build in Progress...</p>
-
-        <a
-          href="#"
-          className="text-primary text-xs font-mono capitalize hover:underline underline-offset-2"
-        >
-          Login to test out what's coming next!
-        </a>
-
-        <TopTemplatesDisplay />
+        <TopTemplatesDisplay templates={templates} />
       </div>
     </>
   );

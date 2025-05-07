@@ -70,7 +70,7 @@ body {
 /* react-select styles end */
 
 .subheading-style {
-  @apply label text-xl font-bold bg-primary text-primary-content rounded-lg px-4 py-2 mb-4;
+  @apply label text-xl font-bold bg-primary text-primary-content! rounded-lg px-4 py-2 mb-4;
 }
 .subtitle-style {
   @apply text-base-content/80 bg-base-100 border border-base-300 p-4 rounded-lg mb-4;

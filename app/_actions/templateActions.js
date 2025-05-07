@@ -695,6 +695,11 @@ export async function fetchTopTemplates() {
         title: true,
         topic: true,
         thumbnailUrl: true,
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
         _count: {
           select: {
             submissions: true,

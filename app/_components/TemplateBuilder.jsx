@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, Settings, ArrowLeft, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 import TemplateMetadata from "@/app/_components/TemplateMetadata";

@@ -1,55 +1,64 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { fetchTopTemplates } from "@/app/_actions/templateActions";
 import { ScrollText } from "lucide-react";
 import Link from "next/link";
 
-const TopTemplatesDisplay = () => {
-  const [templates, setTemplates] = useState([]);
-
-  useEffect(() => {
-    const loadTopTemplates = async () => {
-      const data = await fetchTopTemplates();
-      setTemplates(data);
-    };
-    loadTopTemplates();
-  }, []);
-
+const TopTemplatesDisplay = ({ templates }) => {
   return (
-    <div className="container bg-base-300 mx-auto p-4 rounded-2xl">
+    <div className="container bg-base-200 border border-base-300 mx-auto p-4 rounded-2xl">
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <ScrollText /> Top Forms
+        <ScrollText /> Trending Templates
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {templates.map((template) => (
-          <div key={template.id} className="card bg-base-200 shadow-xl">
-            <figure>
-              <img
-                src={
-                  template.thumbnailUrl ||
-                  "https://th.bing.com/th/id/OIP.90sDWdblfZFiciIEpsGFwwHaEY?cb=iwp1&rs=1&pid=ImgDetMain"
-                }
-                alt={template.title}
-                className="h-48 w-full object-cover"
-              />
-            </figure>
+          <div
+            key={template.id}
+            className="bg-base-100 rounded-xl shadow-xl p-4 border border-base-300"
+          >
+            <h4 className="text-xl text-base-content/70 capitalize font-bold">
+              {template.title}
+            </h4>
 
-            <div className="card-body bg-base-100">
-              <h3 className="card-title text-lg">{template.title}</h3>
-              <div className="badge badge-primary">{template.topic}</div>
-              <p className="text-sm">Created by: {template.creator.email}</p>
-              <div className="card-actions justify-between items-center mt-4">
-                <div className="badge badge-outline badge-primary">
-                  {template._count.submissions} submissions
+            <p className="font-mono text-xs mb-2">
+              Author: {template.creator.email}
+            </p>
+
+            <p className="text-primary text-sm font-monocapitalize mb-2 uppercase">
+              {template.topic}
+            </p>
+
+            <div className="h-[3rem] overflow-hidden relative mb-4">
+              <div className="flex flex-wrap gap-1">
+                {template.tags.map(({ tag }) => (
+                  <span
+                    key={tag.id}
+                    className="badge badge-outline badge-sm badge-primary capitalize"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+                <div className="absolute bottom-0 right-0 bg-gradient-to-l from-base-100 pl-2">
+                  ...
                 </div>
+              </div>
+            </div>
+
+            <div className="flex gap-4 justify-between items-end">
+              <img
+                src={template.thumbnailUrl || "/image-placeholder.png"}
+                alt="Thumbnail"
+                className="block h-[60px] w-auto aspect-square object-cover rounded-full"
+              />
+
+              <div className="flex flex-col gap-1">
                 <Link
                   href={`/templates/${template.id}`}
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-primary btn-sm rounded"
                 >
                   View Form
                 </Link>
+                <p className="font-mono text-xs">
+                  Responses: {template._count.submissions}
+                </p>
               </div>
             </div>
           </div>
