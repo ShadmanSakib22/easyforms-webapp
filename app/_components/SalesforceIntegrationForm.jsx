@@ -8,6 +8,8 @@ export default function SalesforceIntegrationForm({
   onClose,
 }) {
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
     company: "",
     phone: "",
     industry: "",
@@ -16,17 +18,28 @@ export default function SalesforceIntegrationForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/salesforce/create-account", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...formData,
-        userEmail,
-        userId,
-      }),
-    });
-    if (response.ok) {
-      onClose();
+    console.log("Form submitted with data:", formData);
+
+    try {
+      const response = await fetch("/api/salesforce/create-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userEmail,
+          userId,
+          ...formData,
+        }),
+      });
+
+      console.log("API Response status:", response.status);
+      const responseData = await response.json();
+      console.log("API Response data:", responseData);
+
+      if (response.ok) {
+        onClose();
+      }
+    } catch (error) {
+      console.log("API call error:", error);
     }
   };
 
@@ -35,6 +48,24 @@ export default function SalesforceIntegrationForm({
       <div className="modal-box">
         <h3 className="font-bold text-lg">Connect to Salesforce</h3>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <input
+            type="text"
+            placeholder="First Name"
+            className="input input-bordered w-full"
+            value={formData.firstName}
+            onChange={(e) =>
+              setFormData({ ...formData, firstName: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            className="input input-bordered w-full"
+            value={formData.lastName}
+            onChange={(e) =>
+              setFormData({ ...formData, lastName: e.target.value })
+            }
+          />
           <input
             type="text"
             placeholder="Company Name"

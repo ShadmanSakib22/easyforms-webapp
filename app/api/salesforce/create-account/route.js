@@ -19,7 +19,25 @@ export async function POST(request) {
       }),
     });
 
+    if (!authResponse.ok) {
+      const errorBody = await authResponse.text();
+      console.error(
+        "Salesforce Authentication Failed:",
+        authResponse.status,
+        errorBody
+      );
+      return NextResponse.json(
+        {
+          error: `Salesforce Authentication Failed: ${authResponse.status} - ${errorBody}`,
+        },
+        { status: 401 } // Use 401 for unauthorized
+      );
+    }
+
     const { access_token, instance_url } = await authResponse.json();
+    console.log(
+      "Successfully obtained Salesforce access token and instance URL."
+    );
 
     // Create Account
     const accountResponse = await fetch(
@@ -38,7 +56,25 @@ export async function POST(request) {
       }
     );
 
+    if (!accountResponse.ok) {
+      const errorBody = await accountResponse.json();
+      console.error(
+        "Error Creating Account:",
+        accountResponse.status,
+        errorBody
+      );
+      return NextResponse.json(
+        {
+          error: `Error Creating Account: ${
+            accountResponse.status
+          } - ${JSON.stringify(errorBody)}`,
+        },
+        { status: accountResponse.status }
+      );
+    }
+
     const accountResult = await accountResponse.json();
+    console.log("Account Created:", accountResult);
 
     // Create Contact
     const contactResponse = await fetch(
@@ -51,14 +87,41 @@ export async function POST(request) {
         },
         body: JSON.stringify({
           AccountId: accountResult.id,
+          FirstName: data.firstName,
+          LastName: data.lastName,
           Email: data.userEmail,
           Phone: data.phone,
         }),
       }
     );
 
-    return NextResponse.json({ success: true });
+    if (!contactResponse.ok) {
+      const errorBody = await contactResponse.json();
+      console.error(
+        "Error Creating Contact:",
+        contactResponse.status,
+        errorBody
+      );
+      return NextResponse.json(
+        {
+          error: `Error Creating Contact: ${
+            contactResponse.status
+          } - ${JSON.stringify(errorBody)}`,
+        },
+        { status: contactResponse.status }
+      );
+    }
+
+    const contactResult = await contactResponse.json();
+    console.log("Contact Created:", contactResult);
+
+    return NextResponse.json({
+      success: true,
+      accountId: accountResult.id,
+      contactId: contactResult.id,
+    });
   } catch (error) {
+    console.error("An unexpected error occurred:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
