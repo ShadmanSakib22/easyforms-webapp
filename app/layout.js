@@ -6,6 +6,7 @@ import Footer from "@/app/_components/Footer";
 import { Toaster } from "react-hot-toast";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default async function RootLayout({ children }) {
             />
             <div className="min-h-screen">{children}</div>
             <Footer />
+            <Analytics />
           </body>
         </NextIntlClientProvider>
       </html>
