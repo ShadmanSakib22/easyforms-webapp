@@ -13,13 +13,14 @@ datasource db {
 }
 
 model User {
-  clerkId   String   @id
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  role      String   @default("member")  // "member", "admin"
-  status    String   @default("active")  // "active", "blocked"
-  templates Template[]
+  clerkId    String   @id
+  email      String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  role       String   @default("member")  // "member", "admin"
+  status     String   @default("active")  // "active", "blocked"
+  salesforce String   @default("notConnected")
+  templates  Template[]
   submissions Submission[]
 }
 

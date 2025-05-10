@@ -177,5 +177,21 @@
     "search": "Buscar respuesta",
     "no data": "No hay datos.",
     "no question text": "Sin texto de pregunta."
+  },
+  "salesforce": {
+    "Stay Ahead with ezForms!": "¡Mantente a la vanguardia con ezForms!",
+    "Connect your Salesforce to": "Conecta tu Salesforce para obtener las últimas actualizaciones sobre nuevas funciones, consejos exclusivos y próximos cambios. ¡No te lo pierdas!",
+    "Connect Now": "Conectar ahora",
+    "Connect to Salesforce": "Conectar a Salesforce",
+    "First Name": "Tu nombre",
+    "Last Name": "Tu apellido",
+    "Phone": "Tu teléfono",
+    "Company Name": "Nombre de la empresa",
+    "Connect": "Conectar",
+    "Cancel": "Cancelar",
+    "Must be atleast 3 characters": "Debe tener al menos 3 caracteres",
+    "containing only letters, numbers or dashes": "Conteniendo solo letras, números o guiones",
+    "Connected to Salesforce": "Conectado a Salesforce",
+    "You'll receive updates about new features and releases": "Recibirás actualizaciones sobre nuevas funciones y lanzamientos"
   }
 }

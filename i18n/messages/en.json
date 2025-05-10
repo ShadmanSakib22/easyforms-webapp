@@ -177,5 +177,21 @@
     "search": "Search answers...",
     "no data": "No data.",
     "no question text": "No question text."
+  },
+  "salesforce": {
+    "Stay Ahead with ezForms!": "Stay Ahead with ezForms!",
+    "Connect your Salesforce to": "Connect your Salesforce to get the latest updates on new features, exclusive tips, and upcoming changes. Don't miss out!",
+    "Connect Now": "Connect Now",
+    "Connect to Salesforce": "Connect to Salesforce",
+    "First Name": "Your First Name",
+    "Last Name": "Your Last Name",
+    "Phone": "Your Phone",
+    "Company Name": "Company Name",
+    "Connect": "Connect",
+    "Cancel": "Cancel",
+    "Must be atleast 3 characters": "Must be atleast 3 characters",
+    "containing only letters, numbers or dashes": "containing only letters, numbers or dashes",
+    "Connected to Salesforce": "Connected to Salesforce",
+    "You'll receive updates about new features and releases": "You'll receive updates about new features and releases"
   }
 }

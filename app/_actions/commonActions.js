@@ -75,3 +75,16 @@ export const adminPermissionsCheck = async () => {
     redirect("/403");
   }
 };
+
+export async function checkSalesforceConnection(userId) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      select: { salesforce: true },
+    });
+    return user?.salesforce === "connected";
+  } catch (error) {
+    console.error("Error fetching salesforce status:", error);
+    return null;
+  }
+}

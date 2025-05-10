@@ -14,9 +14,11 @@ const DashboardContent = ({
   admin,
   userEmail,
   userId,
+  salesforceConnected,
 }) => {
   const [showSFForm, setShowSFForm] = useState(false);
   const t = useTranslations("common");
+  const t2 = useTranslations("salesforce");
 
   return (
     <div className="container max-w-[1100px] mx-auto my-[3rem] px-4">
@@ -34,12 +36,6 @@ const DashboardContent = ({
           )}
         </ul>
         <div className="flex gap-2">
-          <button
-            onClick={() => setShowSFForm(true)}
-            className="btn btn-sm btn-primary btn-outline"
-          >
-            Connect Salesforce
-          </button>
           <Link href={"/templates/builder"}>
             <button className="btn btn-sm btn-success btn-outline">
               {t("Create Form")} <Plus size={16} />
@@ -47,15 +43,46 @@ const DashboardContent = ({
           </Link>
         </div>
       </div>
-      {showSFForm && (
-        <SalesforceIntegrationForm
-          userEmail={userEmail}
-          userId={userId}
-          onClose={() => setShowSFForm(false)}
-        />
-      )}
       <TemplatesTable templatesList={templatesList} />
       <InvitesTable invitesList={invitesList} />
+
+      {/* Salesforce Integration Form */}
+      {salesforceConnected ? (
+        <div className="bg-base-200 shadow-xl border-1 border-base-300 p-4 rounded-md flex flex-wrap gap-4 items-end justify-between">
+          <div className="max-w-[500px]">
+            <h2 className="text-lg font-semibold text-success">
+              {t2("Connected to Salesforce")} ✓
+            </h2>
+            <p className="text-base-content text-sm">
+              {t2("You'll receive updates about new features and releases")}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-base-200 shadow-xl border-1 border-base-300 p-4 rounded-md flex flex-wrap gap-4 items-end justify-between">
+          <div className="max-w-[500px]">
+            <h2 className="text-lg font-semibold">
+              {t2("Stay Ahead with ezForms!")}
+            </h2>
+            <p className="text-base-content text-sm">
+              {t2("Connect your Salesforce to")}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowSFForm(true)}
+            className="btn btn-sm btn-primary"
+          >
+            {t2("Connect Now")}
+          </button>
+          {showSFForm && (
+            <SalesforceIntegrationForm
+              userEmail={userEmail}
+              userId={userId}
+              onClose={() => setShowSFForm(false)}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

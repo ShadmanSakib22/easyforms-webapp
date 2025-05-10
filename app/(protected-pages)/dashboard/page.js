@@ -5,7 +5,11 @@ import {
   fetchInvitesForUser,
 } from "@/app/_actions/templateActions";
 import { redirect } from "next/navigation";
-import { isLocked, isAdmin } from "@/app/_actions/commonActions";
+import {
+  isLocked,
+  isAdmin,
+  checkSalesforceConnection,
+} from "@/app/_actions/commonActions";
 import DashboardContent from "./DashboardContent";
 
 const Page = async () => {
@@ -18,6 +22,8 @@ const Page = async () => {
     redirect("/locked");
   }
 
+  const salesforceConnected = await checkSalesforceConnection(userId);
+
   const admin = await isAdmin(userId);
   const templatesList = await fetchCreatorsTemplateList(userId);
   const invitesList = await fetchInvitesForUser(userEmail);
@@ -29,6 +35,7 @@ const Page = async () => {
       admin={admin}
       userEmail={userEmail}
       userId={userId}
+      salesforceConnected={salesforceConnected}
     />
   );
 };
