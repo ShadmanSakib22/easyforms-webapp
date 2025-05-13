@@ -193,5 +193,23 @@
     "containing only letters, numbers or dashes": "Conteniendo solo letras, números o guiones",
     "Connected to Salesforce": "Conectado a Salesforce",
     "You'll receive updates about new features and releases": "Recibirás actualizaciones sobre nuevas funciones y lanzamientos"
+  },
+  "helpTickets": {
+    "helpButton": "Help",
+    "title": "Enviar un Ticket de Ayuda",
+    "description": "Por favor, proporciona un breve resumen del problema que estás experimentando.",
+    "summaryLabel": "Resumen",
+    "summaryPlaceholder": "Describe tu problema...",
+    "priorityLabel": "Prioridad",
+    "priorityHigh": "Alta",
+    "priorityAverage": "Promedio",
+    "priorityLow": "Baja",
+    "submitButton": "Enviar Ticket",
+    "submitting": "Enviando...",
+    "cancelButton": "Cancelar",
+    "ticketSubmittedSuccess": "¡Tu ticket de ayuda se ha enviado correctamente!",
+    "ticketSubmittedError": "Error al enviar el ticket de ayuda. Por favor, inténtalo de nuevo.",
+    "userNotLoggedIn": "Debes iniciar sesión para enviar un ticket de ayuda.",
+    "summaryRequired": "Por favor, proporciona un resumen del problema."
   }
 }

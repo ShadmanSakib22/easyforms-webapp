@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/app/_components/Navbar";
 import Footer from "@/app/_components/Footer";
+import HelpButton from "@/app/_components/HelpButton";
 import { Toaster } from "react-hot-toast";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
@@ -45,6 +46,9 @@ export default async function RootLayout({ children }) {
               }}
             />
             <div className="min-h-screen">{children}</div>
+            <div className="fixed bottom-8 right-5 z-[20]">
+              <HelpButton />
+            </div>
             <Footer />
             <Analytics />
           </body>

@@ -193,5 +193,23 @@
     "containing only letters, numbers or dashes": "containing only letters, numbers or dashes",
     "Connected to Salesforce": "Connected to Salesforce",
     "You'll receive updates about new features and releases": "You'll receive updates about new features and releases"
+  },
+  "helpTickets": {
+    "helpButton": "Help",
+    "title": "Submit a Help Ticket",
+    "description": "Please provide a brief summary of the issue you are experiencing.",
+    "summaryLabel": "Summary",
+    "summaryPlaceholder": "Describe your issue...",
+    "priorityLabel": "Priority",
+    "priorityHigh": "High",
+    "priorityAverage": "Average",
+    "priorityLow": "Low",
+    "submitButton": "Submit Ticket",
+    "submitting": "Submitting...",
+    "cancelButton": "Cancel",
+    "ticketSubmittedSuccess": "Your help ticket has been submitted successfully!",
+    "ticketSubmittedError": "Failed to submit help ticket. Please try again.",
+    "userNotLoggedIn": "You must be logged in to submit a help ticket.",
+    "summaryRequired": "Please provide a summary of the issue."
   }
 }
