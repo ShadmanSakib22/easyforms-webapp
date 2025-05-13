@@ -14,7 +14,6 @@ export default function HelpTicketModal({ onClose }) {
     priority: "Average", // Default priority
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,17 +23,8 @@ export default function HelpTicketModal({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError(null);
-
-    if (!user || !user.primaryEmailAddress) {
-      setError(t("userNotLoggedIn"));
-      setIsSubmitting(false);
-      toast.error(t("userNotLoggedIn"));
-      return;
-    }
 
     if (!formData.summary.trim()) {
-      setError(t("summaryRequired"));
       setIsSubmitting(false);
       toast.error(t("summaryRequired"));
       return;
@@ -62,13 +52,11 @@ export default function HelpTicketModal({ onClose }) {
       } else {
         const errorData = await response.json();
         const errorMessage = errorData.error || t("ticketSubmittedError");
-        setError(errorMessage);
         toast.error(errorMessage);
       }
     } catch (err) {
       console.error("API call error:", err);
       const errorMessage = t("ticketSubmittedError");
-      setError(errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -115,14 +103,6 @@ export default function HelpTicketModal({ onClose }) {
               <option value="Low">{t("priorityLow")}</option>
             </select>
           </label>
-
-          {/* Error Message */}
-          {error && (
-            <div role="alert" className="alert alert-error">
-              Error:
-              <span>{error}</span>
-            </div>
-          )}
 
           {/* Modal Actions */}
           <div className="modal-action">

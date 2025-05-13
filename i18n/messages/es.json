@@ -207,9 +207,9 @@
     "submitButton": "Enviar Ticket",
     "submitting": "Enviando...",
     "cancelButton": "Cancelar",
-    "ticketSubmittedSuccess": "¡Tu ticket de ayuda se ha enviado correctamente!",
-    "ticketSubmittedError": "Error al enviar el ticket de ayuda. Por favor, inténtalo de nuevo.",
-    "userNotLoggedIn": "Debes iniciar sesión para enviar un ticket de ayuda.",
+    "ticketSubmittedSuccess": "¡Ticket enviado exitosamente!",
+    "ticketSubmittedError": "Error al enviar el ticket. Por favor, inténtalo de nuevo más tarde.",
+    "userNotLoggedIn": "Se requiere iniciar sesión.",
     "summaryRequired": "Por favor, proporciona un resumen del problema."
   }
 }

@@ -207,9 +207,9 @@
     "submitButton": "Submit Ticket",
     "submitting": "Submitting...",
     "cancelButton": "Cancel",
-    "ticketSubmittedSuccess": "Your help ticket has been submitted successfully!",
-    "ticketSubmittedError": "Failed to submit help ticket. Please try again.",
-    "userNotLoggedIn": "You must be logged in to submit a help ticket.",
+    "ticketSubmittedSuccess": "Ticket submitted successfully!",
+    "ticketSubmittedError": "Failed to submit ticket. Please try again later.",
+    "userNotLoggedIn": "Login required.",
     "summaryRequired": "Please provide a summary of the issue."
   }
 }
