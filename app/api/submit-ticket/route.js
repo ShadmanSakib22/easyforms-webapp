@@ -1,51 +1,46 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { google } from "googleapis";
-import { Readable } from "stream";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL; // Email for notifications in Power Automate
-const GOOGLE_DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID; // Storage
-const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(
-  /\\n/g,
-  "\n"
-); // Handle newline characters
-const GOOGLE_CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL;
+import { Dropbox } from "dropbox";
+import fetch from "node-fetch";
 
-if (!GOOGLE_DRIVE_FOLDER_ID || !GOOGLE_PRIVATE_KEY || !GOOGLE_CLIENT_EMAIL) {
+const DROPBOX_UPLOAD_PATH = process.env.DROPBOX_UPLOAD_PATH;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+
+// Dropbox Access Token
+const DROPBOX_ACCESS_TOKEN = process.env.DROPBOX_ACCESS_TOKEN;
+
+// Initialize Dropbox client
+let dbx;
+if (DROPBOX_ACCESS_TOKEN) {
+  dbx = new Dropbox({
+    accessToken: DROPBOX_ACCESS_TOKEN,
+    fetch: fetch,
+  });
+} else {
   console.error(
-    "FATAL ERROR: Missing one or more Google Drive environment variables."
+    "FATAL ERROR: DROPBOX_ACCESS_TOKEN environment variable is not set."
   );
 }
-
-// JWT client for authentication
-const jwtClient = new google.auth.JWT(
-  GOOGLE_CLIENT_EMAIL,
-  null,
-  GOOGLE_PRIVATE_KEY,
-  ["https://www.googleapis.com/auth/drive"] // Scope for Google Drive
-);
 
 export async function POST(req) {
   const { userId } = await auth();
 
   if (!userId) {
-    // User is not authenticated
     console.warn("Attempted to submit ticket without authentication.");
     return NextResponse.json({ error: "Login Required!" }, { status: 401 });
   }
 
-  // Authenticate with Google Drive API
-  try {
-    await jwtClient.authorize();
-  } catch (authError) {
-    console.error("Google Drive authentication failed:", authError);
+  // Check for required environment variables and Dropbox client initialization
+  if (!dbx || !DROPBOX_UPLOAD_PATH || !ADMIN_EMAIL) {
+    console.error(
+      "FATAL ERROR: Missing one or more required environment variables (Dropbox or Admin Email) or Dropbox client not initialized."
+    );
     return NextResponse.json(
-      { error: "Ticket system is down 😔" },
+      { error: "Server configuration error" },
       { status: 500 }
     );
   }
-
-  const drive = google.drive({ version: "v3", auth: jwtClient });
 
   try {
     const { reportedBy, link, priority, summary } = await req.json();
@@ -76,39 +71,39 @@ export async function POST(req) {
       );
     }
 
-    // Construct JSON data for the ticket
+    // Construct the JSON data for the ticket
     const ticketJson = {
       "Reported by": reportedBy,
       Link: link,
       Priority: priority,
       Summary: summary.trim(),
       Timestamp: new Date().toISOString(),
-      AdminEmail: ADMIN_EMAIL, // admin email for Power Automate
+      AdminEmail: ADMIN_EMAIL,
     };
 
-    // Generate a unique filename (using timestamp and user ID)
+    // Generate a unique filename (e.g., using timestamp and user ID)
     const filename = `help-ticket-${Date.now()}-${userId}.json`;
+    // Construct the full path in Dropbox
+    // Ensure the path starts with a '/'
+    const filePath = `${
+      DROPBOX_UPLOAD_PATH.startsWith("/") ? "" : "/"
+    }${DROPBOX_UPLOAD_PATH}/${filename}`;
 
-    // Convert JSON object to a string and then to a readable stream
+    // Convert JSON object to a string and then to a Buffer for Dropbox upload
     const jsonString = JSON.stringify(ticketJson, null, 2);
-    const media = {
-      mimeType: "application/json",
-      body: Readable.from([jsonString]), // Create a stream from the string
-    };
+    const fileBuffer = Buffer.from(jsonString);
 
-    // Upload the file to Google Drive
-    const uploadResponse = await drive.files.create({
-      requestBody: {
-        name: filename,
-        parents: [GOOGLE_DRIVE_FOLDER_ID], // Specify the target folder
-      },
-      media: media,
-      fields: "id,name", // Request specific fields in the response
+    // Upload the file to Dropbox
+    const uploadResponse = await dbx.filesUpload({
+      path: filePath,
+      contents: fileBuffer,
+      mode: { ".tag": "overwrite" }, // or add
+      autorename: false, // if add, true
     });
 
-    // Log success server-side
     console.log(
-      `Successfully uploaded file to Google Drive: ${uploadResponse.data.name} (${uploadResponse.data.id})`
+      "Successfully uploaded file to Dropbox:",
+      uploadResponse.result.path_display
     );
 
     return NextResponse.json({
@@ -117,24 +112,20 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error(
-      "Error submitting help ticket or uploading to Google Drive:",
+      "Error submitting help ticket or uploading to Dropbox:",
       error
     );
 
-    // Check if it's a Google Drive API error and log details server-side
-    if (error.response && error.response.data && error.response.data.error) {
-      console.error(
-        "Google Drive API Error Details:",
-        error.response.data.error
-      );
+    // Check if it's a Dropbox API error
+    if (error.error && error.error.error_summary) {
+      console.error("Dropbox API Error Details:", error.error.error_summary);
       return NextResponse.json(
-        {
-          error: "Ticket system is down 😔",
-        },
-        { status: error.response.status || 500 }
+        { error: `Dropbox API Error: ${error.error.error_summary}` },
+        { status: 500 }
       );
     }
 
+    // Handle other potential errors
     return NextResponse.json(
       { error: "Ticket system is down 😔" },
       { status: 500 }
