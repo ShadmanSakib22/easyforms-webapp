@@ -19,7 +19,6 @@ import {
   Home,
   LayoutDashboard,
   FileText,
-  HelpCircle,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -109,7 +108,7 @@ const Navbar = () => {
   // Close side nav when screen size changes to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+      if (window.innerWidth >= 1280) {
         setIsSideNavOpen(false);
       }
     };
@@ -181,16 +180,9 @@ const Navbar = () => {
               >
                 {t("docs")}
               </Link>
-              {/* Support */}
-              <Link
-                href={"/#"}
-                className="text-base-content/80 font-mono text-sm uppercase hover:underline underline-offset-4"
-              >
-                {t("support")}
-              </Link>
               {/* Search - Form */}
               <form action="/search" method="get" className="join">
-                <label className="input input-sm join-item">
+                <label className="input input-sm max-w-[140px] join-item">
                   <input
                     type="search"
                     name="q"
@@ -409,16 +401,6 @@ const Navbar = () => {
                 >
                   <FileText className="h-5 w-5" />
                   <span>{t("docs")}</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#"
-                  onClick={closeSideNav}
-                  className="flex items-center gap-3 py-3"
-                >
-                  <HelpCircle className="h-5 w-5" />
-                  <span>{t("support")}</span>
                 </Link>
               </li>
             </ul>

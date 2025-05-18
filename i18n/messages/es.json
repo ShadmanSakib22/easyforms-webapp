@@ -1,6 +1,6 @@
 {
   "navbar": {
-    "dashboard": "Panel de control",
+    "dashboard": "Panel",
     "docs": "Documentación",
     "support": "Soporte",
     "search": "Buscar",
@@ -28,7 +28,7 @@
     "You do not have permission to access this page": "No tienes permiso para acceder a esta página",
     "Page Not Found - 404": "Página no encontrada - 404",
     "No page found at this location": "No se encontró ninguna página en esta ubicación",
-    "Dashboard": "Panel de control",
+    "Dashboard": "Panel",
     "Admin-Panel": "Panel de administración",
     "Create Form": "Crear formulario",
     "Users": "Usuarios",
@@ -43,7 +43,7 @@
     "Template Starter": "Inicio de plantilla",
     "Start with Existing Template": "Empezar con plantilla existente",
     "Start New": "Empezar de nuevo",
-    "Return to Dashboard": "Volver al panel de control",
+    "Return to Dashboard": "Volver al panel",
     "Template Builder": "Constructor de plantillas",
     "Effortlessly build Forms/Surveys/Quizzes/Polls with": "Crea fácilmente formularios/encuestas/cuestionarios/sondeos con",
     "Add infinite number of questions with markdown supporting fields": "Añade un número infinito de preguntas con campos compatibles con Markdown.",
@@ -85,7 +85,7 @@
     "Existing questions will be over-written!": "¡Las preguntas existentes serán sobrescritas!"
   },
   "form": {
-    "Return to Dashboard": "Volver al panel de control",
+    "Return to Dashboard": "Volver al panel",
     "return to details": "Volver a detalles",
     "return to builder": "Volver al constructor",
     "form response": "Respuesta del formulario",
@@ -211,5 +211,16 @@
     "ticketSubmittedError": "Error al enviar el ticket. Por favor, inténtalo de nuevo más tarde.",
     "userNotLoggedIn": "Se requiere iniciar sesión.",
     "summaryRequired": "Por favor, proporciona un resumen del problema."
+  },
+  "home": {
+    "welcome": "Bienvenido a",
+    "The easiest way to create forms, surveys, quizzes, and polls!": "La forma más fácil de crear formularios, encuestas, cuestionarios y encuestas!",
+    "Get Started": "Comenzar",
+    "Sign-In": "Iniciar sesión",
+    "Developed by Shadman Sakib": "Desarrollado por Shadman Sakib",
+    "Trending Templates": "Plantillas Populares",
+    "Author": "Autor:",
+    "View Form": "Ver Formulario",
+    "Responses": "Respuestas:"
   }
 }

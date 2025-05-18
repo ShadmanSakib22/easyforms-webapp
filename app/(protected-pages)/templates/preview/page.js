@@ -3,6 +3,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useTemplateStore } from "@/store/templateStore";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -139,10 +140,22 @@ export default function PreviewTemplatePage() {
 
   const t = useTranslations("form");
 
+  // Get search parameters
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
+  const templateId = searchParams.get("templateId");
+
+  // Determine the return path based on search parameters
+  const returnPath =
+    from === "edit" && templateId
+      ? `/templates/edit/${templateId}?returnedFrom=preview` // Editor return path
+      : "/templates/builder"; // Default return to general builder page
+
   return (
     <div className="container max-w-[1024px] mx-auto my-10 md:my-20 px-4">
       <div className="mt-10 mb-4">
-        <Link href="/templates/builder" className="btn btn-sm btn-ghost">
+        {/* Use the dynamic returnPath */}
+        <Link href={returnPath} className="btn btn-sm btn-ghost">
           <ArrowLeft size={16} className="mr-1" /> {t("return to builder")}
         </Link>
       </div>
@@ -264,7 +277,8 @@ export default function PreviewTemplatePage() {
       </article>
 
       <div className="mt-4 mb-4">
-        <Link href="/templates/builder" className="btn btn-sm btn-ghost">
+        {/* Use the dynamic returnPath */}
+        <Link href={returnPath} className="btn btn-sm btn-ghost">
           <ArrowLeft size={16} className="mr-1" /> {t("return to builder")}
         </Link>
       </div>

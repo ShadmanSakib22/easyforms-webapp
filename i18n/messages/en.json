@@ -211,5 +211,16 @@
     "ticketSubmittedError": "Failed to submit ticket. Please try again later.",
     "userNotLoggedIn": "Login required.",
     "summaryRequired": "Please provide a summary of the issue."
+  },
+  "home": {
+    "welcome": "Welcome to",
+    "The easiest way to create forms, surveys, quizzes, and polls!": "The easiest way to create forms, surveys, quizzes, and polls!",
+    "Get Started": "Get Started",
+    "Sign-In": "Sign-In",
+    "Developed by Shadman Sakib": "Developed by Shadman Sakib",
+    "Trending Templates": "Trending Templates",
+    "Author": "Author:",
+    "View Form": "View Form",
+    "Responses": "Responses:"
   }
 }

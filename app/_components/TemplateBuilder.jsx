@@ -14,11 +14,12 @@ import {
 } from "@/app/_actions/templateActions";
 import UseExistingQuestions from "@/app/_components/UseExistingQuestions";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function TemplateBuilder({ templateId }) {
   const t = useTranslations("builder");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const {
     title,
@@ -49,7 +50,12 @@ export default function TemplateBuilder({ templateId }) {
 
   useEffect(() => {
     async function loadTemplate() {
-      if (templateId) {
+      // Check if we are returning from the preview page
+      const returnedFromPreview =
+        searchParams.get("returnedFrom") === "preview";
+
+      // Only fetch and set state if templateId is present AND we are NOT returning from preview
+      if (templateId && !returnedFromPreview) {
         setIsLoading(true);
         const template = await fetchTemplateById(templateId);
         if (template) {
@@ -57,31 +63,46 @@ export default function TemplateBuilder({ templateId }) {
           setDescription(template.description);
           setTopic(template.topic);
           setThumbnailUrl(template.thumbnailUrl);
-          setTags(template.tags.map((tag) => tag.tag.name));
-          setInvitedUsers(template.invitedUsers.map((user) => user.email));
+          // Convert tags and invitedUsers to arrays of strings
+          setTags(
+            Array.isArray(template.tags)
+              ? template.tags.map((tag) => tag.tag.name)
+              : []
+          );
+          setInvitedUsers(
+            Array.isArray(template.invitedUsers)
+              ? template.invitedUsers.map((user) => user.email)
+              : []
+          );
 
-          const mappedQuestions = template.questions.map((q) => ({
-            id: q.id,
-            label: q.label,
-            description: q.description,
-            type: q.type,
-            placeholder: q.placeholder,
-            required: q.required,
-            show: q.show,
-            options: q.options.map((opt) => ({
-              id: opt.id,
-              text: opt.text,
-            })),
-          }));
+          const mappedQuestions = Array.isArray(template.questions)
+            ? template.questions.map((q) => ({
+                id: q.id,
+                label: q.label,
+                description: q.description,
+                type: q.type,
+                placeholder: q.placeholder,
+                required: q.required,
+                show: q.show,
+                options: Array.isArray(q.options)
+                  ? q.options.map((opt) => ({
+                      id: opt.id,
+                      text: opt.text,
+                    }))
+                  : [],
+              }))
+            : [];
 
           setQuestions(mappedQuestions);
         }
         setIsLoading(false);
       }
+      // If templateId is not present (new template) or returnedFromPreview is true,
+      // the effect does nothing, preserving existing Zustand state.
     }
 
     loadTemplate();
-  }, [templateId]);
+  }, [templateId, searchParams]);
 
   if (isLoading) {
     return (
@@ -120,6 +141,17 @@ export default function TemplateBuilder({ templateId }) {
       } else {
         if (await publishTemplate(payload)) {
           toast.success(t("Template published successfully!"));
+          //clear state
+          setTitle("Untitled Form");
+          setDescription("No description provided.");
+          setTopic("general");
+          setTags([]);
+          setThumbnailUrl("");
+          setInvitedUsers([]);
+          setAccessType("public");
+          setQuestions([]);
+          setSelectedMode("new");
+          //redirect
           router.push("/dashboard");
         }
       }
@@ -127,6 +159,10 @@ export default function TemplateBuilder({ templateId }) {
       toast.error(t("Failed to publish template Please try again"));
     }
   };
+
+  const previewHref = templateId
+    ? `/templates/preview?from=edit&templateId=${templateId}`
+    : `/templates/preview`;
 
   return (
     <div className="container mx-auto mb-[3rem] px-4 max-w-[1100px]">
@@ -217,7 +253,7 @@ export default function TemplateBuilder({ templateId }) {
 
           {/* Preview Publish */}
           <div className="flex justify-end gap-3 mt-6">
-            <Link href="/templates/preview">
+            <Link href={previewHref}>
               <button className="btn btn-primary">
                 {t("Preview")} <Eye className="w-4 h-4" />
               </button>

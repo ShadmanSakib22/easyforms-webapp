@@ -1,11 +1,13 @@
 import { ScrollText } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const TopTemplatesDisplay = ({ templates }) => {
+  const t = useTranslations("home");
   return (
-    <div className="container bg-base-200 border border-base-300 mx-auto p-4 rounded-2xl">
+    <div className="container max-w-[1200px] bg-base-200 border border-base-300 mx-auto p-4 rounded-2xl">
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <ScrollText /> Trending Templates
+        <ScrollText /> {t("Trending Templates")}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -19,7 +21,7 @@ const TopTemplatesDisplay = ({ templates }) => {
             </h4>
 
             <p className="font-mono text-xs mb-2">
-              Author: {template.creator.email}
+              {t("Author")} {template.creator.email}
             </p>
 
             <p className="text-primary text-sm font-monocapitalize mb-2 uppercase">
@@ -54,10 +56,10 @@ const TopTemplatesDisplay = ({ templates }) => {
                   href={`/templates/${template.id}`}
                   className="btn btn-primary btn-sm rounded"
                 >
-                  View Form
+                  {t("View Form")}
                 </Link>
                 <p className="font-mono text-xs">
-                  Responses: {template._count.submissions}
+                  {t("Responses")} {template._count.submissions}
                 </p>
               </div>
             </div>
