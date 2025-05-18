@@ -28,9 +28,9 @@ export default async function Home() {
               </i>
             </p>
             {/*Video demonstration*/}
-            <div className="mt-4 border-2 border-primary/40 rounded-lg overflow-hidden relative aspect-video pointer-events-none">
+            <div className="mt-4 border-2 border-primary/40 rounded-lg overflow-hidden relative aspect-video">
               <iframe
-                src="http://www.youtube.com/embed/jOkDvIH5DGc?autoplay=1&mute=1&loop=1&playlist=jOkDvIH5DGc"
+                src="https://www.youtube.com/embed/jOkDvIH5DGc?autoplay=1&mute=1&loop=1&playlist=jOkDvIH5DGc"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="absolute top-0 left-0 w-full h-full"
